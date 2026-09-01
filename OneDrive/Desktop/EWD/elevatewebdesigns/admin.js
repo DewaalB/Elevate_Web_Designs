@@ -1,0 +1,488 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged, signInWithEmailAndPassword,
+  signOut, sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, collection, doc, updateDoc, deleteDoc, onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getMessaging, getToken, onMessage
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
+
+/* ── Fill these in once the Cloudflare relay is deployed (see cf-worker/README.md) ── */
+const NOTIFY_WORKER_URL = 'https://elevate-lead-notify.dewaalb3.workers.dev';
+const VAPID_PUBLIC_KEY  = 'BHQloe6RWA8-h5ZHMtBFWJ2e2qxcJa2DSHuUII5s-mCz-ODt3wKYXzrBoyKSFjJ5-vuFqAHl7v96J6DavzFJs-Q';
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyBCXFn13dHeCQ1-SO7-rAXQ2VKy75Vxqjg",
+  authDomain:        "elevatewebdesigns-1fc3d.firebaseapp.com",
+  projectId:         "elevatewebdesigns-1fc3d",
+  storageBucket:     "elevatewebdesigns-1fc3d.firebasestorage.app",
+  messagingSenderId: "778173951248",
+  appId:             "1:778173951248:web:5922c9dcd1623b9e658995"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const loginView   = document.getElementById('login-view');
+const dashView    = document.getElementById('dash-view');
+const loginForm   = document.getElementById('login-form');
+const loginBtn    = document.getElementById('login-btn');
+const loginError  = document.getElementById('login-error');
+const forgotBtn   = document.getElementById('forgot-btn');
+const logoutBtn   = document.getElementById('logout-btn');
+
+let allLeads     = [];
+let leadsUnsub   = null;
+let hasLoadedOnce = false;
+
+/* ── AUTH STATE ── */
+onAuthStateChanged(auth, user => {
+  if (user) {
+    loginView.hidden = true;
+    dashView.hidden  = false;
+    loadLeads();
+    startIdleTimer();
+  } else {
+    loginView.hidden = false;
+    dashView.hidden  = true;
+    stopIdleTimer();
+    if (leadsUnsub) { leadsUnsub(); leadsUnsub = null; }
+    allLeads = [];
+    hasLoadedOnce = false;
+  }
+});
+
+/* ── AUTO-LOGOUT ON INACTIVITY ──
+   Signs you out after 15 minutes of no activity, so a session left open
+   on a shared or unattended device doesn't stay live indefinitely. */
+const IDLE_LIMIT_MS = 15 * 60 * 1000;
+let idleTimer = null;
+
+function startIdleTimer() {
+  resetIdleTimer();
+  ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt =>
+    document.addEventListener(evt, resetIdleTimer, { passive: true })
+  );
+}
+function stopIdleTimer() {
+  clearTimeout(idleTimer);
+  ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt =>
+    document.removeEventListener(evt, resetIdleTimer)
+  );
+}
+function resetIdleTimer() {
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => {
+    signOut(auth);
+  }, IDLE_LIMIT_MS);
+}
+
+loginForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  loginError.textContent = '';
+  loginError.classList.remove('success');
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+
+  loginBtn.disabled = true;
+  loginBtn.textContent = 'Signing in...';
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (err) {
+    loginError.textContent = friendlyAuthError(err.code);
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'Sign In';
+  }
+});
+
+forgotBtn.addEventListener('click', async () => {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) {
+    loginError.textContent = 'Enter your email above first, then click "Forgot password?"';
+    loginError.classList.remove('success');
+    return;
+  }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    loginError.textContent = 'Password reset email sent — check your inbox.';
+    loginError.classList.add('success');
+  } catch (err) {
+    loginError.textContent = friendlyAuthError(err.code);
+    loginError.classList.remove('success');
+  }
+});
+
+logoutBtn.addEventListener('click', () => signOut(auth));
+
+function friendlyAuthError(code) {
+  switch (code) {
+    case 'auth/invalid-email': return 'That email address looks invalid.';
+    case 'auth/user-not-found':
+    case 'auth/wrong-password':
+    case 'auth/invalid-credential': return 'Incorrect email or password.';
+    case 'auth/too-many-requests': return 'Too many attempts — try again in a few minutes.';
+    default: return 'Something went wrong. Please try again.';
+  }
+}
+
+/* ── LEADS (live) ──
+   A real-time Firestore listener instead of a one-time fetch, so new leads
+   (from the contact form or the estimator) appear here the instant they're
+   submitted — no refresh needed — and can trigger the alerts below. */
+function loadLeads() {
+  const emptyState = document.getElementById('empty-state');
+  emptyState.textContent = 'Loading leads…';
+  emptyState.style.display = 'block';
+
+  if (leadsUnsub) leadsUnsub();
+
+  leadsUnsub = onSnapshot(collection(db, 'leads'), snap => {
+    const prevIds = new Set(allLeads.map(l => l.id));
+    const nextLeads = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    nextLeads.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+    // Only treat leads as "new arrivals" (chime/popup/flash) once we've
+    // already loaded once — the initial batch on login shouldn't alert.
+    const newOnes = hasLoadedOnce ? nextLeads.filter(l => !prevIds.has(l.id)) : [];
+
+    allLeads = nextLeads;
+    hasLoadedOnce = true;
+
+    renderStats();
+    renderLeads();
+    updateUnreadBadge();
+
+    newOnes.forEach(notifyNewLead);
+  }, err => {
+    emptyState.textContent = 'Failed to load leads: ' + err.message;
+  });
+}
+
+/* ══════════════════════════════════════════
+   FREE IN-PORTAL NOTIFICATIONS
+   No server, no paid plan — works while this dashboard tab is open
+   (including in the background/minimized). Four layers, in order of
+   how easy they are to miss:
+     1. Unread badge on the bell — persists across visits on this device
+     2. A sound + slide-in toast the moment a lead arrives
+     3. A flashing browser tab title while you're looking elsewhere
+     4. An OS-level desktop notification, if you've enabled it
+══════════════════════════════════════════ */
+const LAST_SEEN_KEY  = 'ewd_admin_last_seen';
+let lastSeenAt        = Number(localStorage.getItem(LAST_SEEN_KEY) || Date.now());
+let unreadCount       = 0;
+let audioCtx          = null;
+let titleFlashTimer   = null;
+const originalTitle   = document.title;
+
+const bellBtn    = document.getElementById('bell-btn');
+const unreadBadge = document.getElementById('unread-badge');
+const alertsBtn  = document.getElementById('alerts-btn');
+const leadToast  = document.getElementById('lead-toast');
+
+function updateUnreadBadge() {
+  unreadCount = allLeads.filter(l => (l.createdAt?.seconds || 0) * 1000 > lastSeenAt).length;
+  if (unreadCount > 0) {
+    unreadBadge.textContent = unreadCount > 99 ? '99+' : String(unreadCount);
+    unreadBadge.hidden = false;
+  } else {
+    unreadBadge.hidden = true;
+  }
+}
+
+function markAllSeen() {
+  lastSeenAt = Date.now();
+  localStorage.setItem(LAST_SEEN_KEY, String(lastSeenAt));
+  updateUnreadBadge();
+  renderLeads();
+  stopFlashTitle();
+}
+
+bellBtn.addEventListener('click', markAllSeen);
+
+// If you're actually looking at the tab, don't leave it flashing/unread.
+window.addEventListener('focus', () => {
+  if (!dashView.hidden) { stopFlashTitle(); markAllSeen(); }
+});
+
+function playChime() {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    [880, 1320].forEach((freq, i) => {
+      setTimeout(() => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.2, audioCtx.currentTime + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
+        o.connect(g).connect(audioCtx.destination);
+        o.start();
+        o.stop(audioCtx.currentTime + 0.35);
+      }, i * 150);
+    });
+  } catch { /* audio not available in this browser — safe to skip */ }
+}
+
+function flashTitle() {
+  clearInterval(titleFlashTimer);
+  let on = false;
+  titleFlashTimer = setInterval(() => {
+    document.title = on ? originalTitle : `🔴 New Lead! (${unreadCount})`;
+    on = !on;
+  }, 1200);
+}
+function stopFlashTitle() {
+  clearInterval(titleFlashTimer);
+  titleFlashTimer = null;
+  document.title = originalTitle;
+}
+
+function showLeadToast(lead) {
+  document.getElementById('lead-toast-title').textContent = 'New lead! 🎉';
+  document.getElementById('lead-toast-msg').textContent =
+    `${lead.name || 'Someone'} · ${(lead.package || 'General enquiry').split(' — ')[0]}`;
+  leadToast.hidden = false;
+  requestAnimationFrame(() => leadToast.classList.add('show'));
+  clearTimeout(leadToast._hideTimer);
+  leadToast._hideTimer = setTimeout(() => {
+    leadToast.classList.remove('show');
+    setTimeout(() => { leadToast.hidden = true; }, 350);
+  }, 6000);
+}
+
+function notifyNewLead(lead) {
+  playChime();
+  showLeadToast(lead);
+  if (document.hidden || !document.hasFocus()) flashTitle();
+
+  if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+    try {
+      const n = new Notification('New lead — Elevate Admin', {
+        body: `${lead.name || 'Someone'} · ${(lead.package || 'General enquiry').split(' — ')[0]}`,
+        tag: lead.id
+      });
+      n.onclick = () => { window.focus(); n.close(); };
+    } catch { /* some browsers restrict this — the toast/sound still fired */ }
+  }
+}
+
+/* ── Desktop alert opt-in (must be a click, browsers block auto-prompts) ── */
+if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+  alertsBtn.hidden = false;
+  alertsBtn.addEventListener('click', async () => {
+    const perm = await Notification.requestPermission();
+    if (perm === 'granted') {
+      alertsBtn.textContent = '🔔 Desktop Alerts On';
+      alertsBtn.disabled = true;
+    } else {
+      alertsBtn.textContent = '🔕 Alerts Blocked — check browser settings';
+    }
+  });
+}
+
+/* ══════════════════════════════════════════
+   PUSH NOTIFICATIONS — WORKS EVEN WHEN CLOSED
+   Uses Firebase Cloud Messaging plus a small free Cloudflare Worker
+   relay (see cf-worker/) instead of a paid Firebase Cloud Function.
+   Registers this browser's push token with the relay so it knows
+   where to deliver the next "new lead" push.
+══════════════════════════════════════════ */
+const pushBtn = document.getElementById('push-btn');
+
+if (!('serviceWorker' in navigator) || !('PushManager' in window) || NOTIFY_WORKER_URL.includes('REPLACE-ME')) {
+  // Not set up yet, or unsupported browser — hide rather than offer a dead button.
+  pushBtn.hidden = true;
+} else {
+  pushBtn.addEventListener('click', async () => {
+    pushBtn.disabled = true;
+    pushBtn.textContent = 'Enabling...';
+    try {
+      let adminKey = localStorage.getItem('ewd_admin_push_key');
+      if (!adminKey) {
+        adminKey = prompt('Enter the admin push key (set up once when the relay was deployed):');
+        if (!adminKey) throw new Error('Admin key is required to register this device.');
+      }
+
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') throw new Error('Notification permission was not granted.');
+
+      const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+      const messaging     = getMessaging(app);
+      const fcmToken       = await getToken(messaging, {
+        vapidKey: VAPID_PUBLIC_KEY,
+        serviceWorkerRegistration: registration
+      });
+      if (!fcmToken) throw new Error('Could not get a push token from Firebase.');
+
+      const res = await fetch(`${NOTIFY_WORKER_URL}/register-token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+        body: JSON.stringify({ fcmToken })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || 'Registration failed — check the admin key.');
+
+      localStorage.setItem('ewd_admin_push_key', adminKey);
+      pushBtn.textContent = '📲 Push Enabled ✓';
+      pushBtn.disabled = true;
+
+      // Foreground pushes (tab open) reuse the existing toast/sound/badge.
+      onMessage(messaging, payload => {
+        notifyNewLead({
+          name:    payload.notification?.body?.split(' · ')[0] || 'Someone',
+          package: payload.notification?.body?.split(' · ')[1] || ''
+        });
+      });
+    } catch (err) {
+      console.error('Push setup failed:', err);
+      pushBtn.disabled = false;
+      pushBtn.textContent = '📲 Enable Push (failed — tap to retry)';
+    }
+  });
+}
+
+function renderStats() {
+  const now = new Date();
+  const weekAgo  = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+  const toDate = l => l.createdAt?.seconds ? new Date(l.createdAt.seconds * 1000) : null;
+
+  document.getElementById('stat-total').textContent = allLeads.length;
+  document.getElementById('stat-week').textContent  = allLeads.filter(l => { const d = toDate(l); return d && d >= weekAgo; }).length;
+  document.getElementById('stat-month').textContent = allLeads.filter(l => { const d = toDate(l); return d && d >= monthAgo; }).length;
+
+  const counts = {};
+  allLeads.forEach(l => {
+    const pkg = (l.package || 'Not specified').split(' — ')[0];
+    counts[pkg] = (counts[pkg] || 0) + 1;
+  });
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+  document.getElementById('stat-top-package').textContent = top ? top[0] : '—';
+}
+
+function renderLeads() {
+  const list       = document.getElementById('leads-list');
+  const emptyState = document.getElementById('empty-state');
+  const search     = document.getElementById('search-input').value.trim().toLowerCase();
+  const statusF    = document.getElementById('status-filter').value;
+
+  const filtered = allLeads.filter(l => {
+    const status = l.status || 'New';
+    if (statusF && status !== statusF) return false;
+    if (!search) return true;
+    const hay = `${l.name || ''} ${l.email || ''} ${l.message || ''}`.toLowerCase();
+    return hay.includes(search);
+  });
+
+  list.querySelectorAll('.lead-card').forEach(el => el.remove());
+
+  if (filtered.length === 0) {
+    emptyState.textContent = allLeads.length === 0
+      ? 'No leads yet — they\'ll appear here as soon as someone submits the contact form.'
+      : 'No leads match your search/filter.';
+    emptyState.style.display = 'block';
+    return;
+  }
+  emptyState.style.display = 'none';
+
+  filtered.forEach(lead => list.appendChild(buildLeadCard(lead)));
+}
+
+function buildLeadCard(lead) {
+  const card = document.createElement('div');
+  const isNew = (lead.createdAt?.seconds || 0) * 1000 > lastSeenAt;
+  card.className = 'lead-card' + (isNew ? ' is-new' : '');
+
+  const date = lead.createdAt?.seconds
+    ? new Date(lead.createdAt.seconds * 1000).toLocaleString('en-ZA', { dateStyle: 'medium', timeStyle: 'short' })
+    : 'Unknown date';
+
+  const status = lead.status || 'New';
+
+  card.innerHTML = `
+    <div class="lead-top">
+      <div>
+        <div class="lead-name">${escapeHtml(lead.name || 'Unnamed')}${isNew ? '<span class="lead-new-tag">NEW</span>' : ''}</div>
+        <div class="lead-meta">
+          <a href="mailto:${escapeAttr(lead.email || '')}">${escapeHtml(lead.email || 'No email')}</a>
+          ${lead.phone ? ' · <a href="tel:' + escapeAttr(lead.phone) + '">' + escapeHtml(lead.phone) + '</a>' : ''}
+        </div>
+        ${lead.package ? '<div class="lead-package">' + escapeHtml(lead.package) + '</div>' : ''}
+      </div>
+      <div class="lead-date">${date}</div>
+    </div>
+    <div class="lead-message">${escapeHtml(lead.message || '')}</div>
+    <div class="lead-controls">
+      <select class="lead-status" data-status="${status}">
+        <option value="New" ${status === 'New' ? 'selected' : ''}>New</option>
+        <option value="Contacted" ${status === 'Contacted' ? 'selected' : ''}>Contacted</option>
+        <option value="Won" ${status === 'Won' ? 'selected' : ''}>Won</option>
+        <option value="Lost" ${status === 'Lost' ? 'selected' : ''}>Lost</option>
+      </select>
+      <input type="text" class="lead-notes" placeholder="Private notes..." value="${escapeAttr(lead.notes || '')}">
+      <span class="save-hint">Saved ✓</span>
+      <button class="lead-delete">Delete</button>
+    </div>
+  `;
+
+  const statusSel = card.querySelector('.lead-status');
+  const notesInput = card.querySelector('.lead-notes');
+  const saveHint   = card.querySelector('.save-hint');
+  const deleteBtn  = card.querySelector('.lead-delete');
+
+  statusSel.addEventListener('change', async () => {
+    statusSel.dataset.status = statusSel.value;
+    lead.status = statusSel.value;
+    await updateDoc(doc(db, 'leads', lead.id), { status: statusSel.value });
+    flashSaved(saveHint);
+    renderStats();
+  });
+
+  let notesTimer;
+  notesInput.addEventListener('input', () => {
+    clearTimeout(notesTimer);
+    notesTimer = setTimeout(async () => {
+      lead.notes = notesInput.value;
+      await updateDoc(doc(db, 'leads', lead.id), { notes: notesInput.value });
+      flashSaved(saveHint);
+    }, 700);
+  });
+
+  deleteBtn.addEventListener('click', async () => {
+    if (!confirm(`Delete the lead from "${lead.name || 'this contact'}"? This can't be undone.`)) return;
+    await deleteDoc(doc(db, 'leads', lead.id));
+    allLeads = allLeads.filter(l => l.id !== lead.id);
+    renderStats();
+    renderLeads();
+  });
+
+  return card;
+}
+
+function flashSaved(el) {
+  el.classList.add('show');
+  clearTimeout(el._hideTimer);
+  el._hideTimer = setTimeout(() => el.classList.remove('show'), 1500);
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+function escapeAttr(str) {
+  return String(str).replace(/"/g, '&quot;');
+}
+
+document.getElementById('search-input').addEventListener('input', renderLeads);
+document.getElementById('status-filter').addEventListener('change', renderLeads);
+document.getElementById('refresh-btn').addEventListener('click', loadLeads);

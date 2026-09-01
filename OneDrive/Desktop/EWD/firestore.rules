@@ -1,0 +1,46 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Only the site owner may sign in with this email — the admin
+    // dashboard is the only place that can produce a valid session for it.
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'dewaalb3@gmail.com';
+    }
+
+    // Public contact-form leads.
+    // Anyone can submit a new lead (create-only). Reading, editing
+    // (status/notes) and deleting is restricted to the admin dashboard.
+    match /leads/{leadId} {
+      allow create: if
+        request.resource.data.keys().hasOnly(['name', 'phone', 'email', 'package', 'message', 'source', 'createdAt']) &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() > 0 && request.resource.data.name.size() < 200 &&
+        request.resource.data.email is string &&
+        request.resource.data.email.size() > 0 && request.resource.data.email.size() < 200 &&
+        request.resource.data.message is string &&
+        request.resource.data.message.size() > 0 && request.resource.data.message.size() < 5000 &&
+        request.resource.data.phone is string && request.resource.data.phone.size() < 50 &&
+        request.resource.data.package is string && request.resource.data.package.size() < 100 &&
+        request.resource.data.source in ['website_contact_form', 'website_estimator'] &&
+        request.resource.data.createdAt == request.time;
+
+      allow read, list: if isAdmin();
+      allow delete: if isAdmin();
+
+      // Even the admin dashboard may only ever change status/notes —
+      // the original submitted fields (name, email, message, etc.)
+      // stay immutable so nobody can quietly rewrite what a lead said.
+      allow update: if isAdmin() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'notes']) &&
+        (!('status' in request.resource.data) || request.resource.data.status in ['New', 'Contacted', 'Won', 'Lost']) &&
+        (!('notes' in request.resource.data) || (request.resource.data.notes is string && request.resource.data.notes.size() < 2000));
+    }
+
+    // Deny everything else by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

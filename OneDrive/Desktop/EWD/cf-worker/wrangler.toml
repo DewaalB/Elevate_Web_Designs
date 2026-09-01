@@ -1,0 +1,8 @@
+name = "elevate-lead-notify"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# Created by `wrangler kv namespace create TOKENS` — paste the returned id here.
+[[kv_namespaces]]
+binding = "TOKENS"
+id = "bbd20c0e83e84f56b336a7ab9264a869"

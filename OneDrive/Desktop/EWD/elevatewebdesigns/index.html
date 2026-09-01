@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elevate Web Design — Websites That Elevate Your Business</title>
+  <meta name="description" content="Modern, responsive and affordable websites for South African small businesses. Custom web design, SEO, and ongoing support.">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.elevatewebdesign.co.za/">
+  <meta property="og:title" content="Elevate Web Design — Websites That Elevate Your Business">
+  <meta property="og:description" content="Modern, responsive and affordable websites for South African small businesses. Custom web design, SEO, and ongoing support.">
+  <meta property="og:image" content="https://www.elevatewebdesign.co.za/earthenglaze.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Elevate Web Design — Websites That Elevate Your Business">
+  <meta name="twitter:description" content="Modern, affordable websites for South African small businesses.">
+  <meta name="twitter:image" content="https://www.elevatewebdesign.co.za/earthenglaze.png">
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,8 92,88 8,88' fill='none' stroke='%2300d4ff' stroke-width='7' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="canonical" href="https://www.elevatewebdesign.co.za/">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Elevate Web Design",
+    "description": "Modern, responsive and affordable websites for South African small businesses. Custom web design, SEO, and ongoing support.",
+    "url": "https://www.elevatewebdesign.co.za/",
+    "telephone": "+27825368312",
+    "email": "elevatewebdesigns26@gmail.com",
+    "priceRange": "R3,500 - R14,000",
+    "areaServed": {
+      "@type": "Country",
+      "name": "South Africa"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "ZA"
+    }
+  }
+  </script>
+
+  <script type="module" src="firebase-init.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="scroll-progress"></div>
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <nav id="nav">
+    <a href="#" class="nav-logo">
+      <div class="logo-glow">
+        <svg viewBox="0 0 32 28" fill="none" width="32" height="28">
+          <polygon points="16,2 30,26 2,26" stroke="url(#g1)" stroke-width="2.5" stroke-linejoin="round"/>
+          <polygon points="16,8 24,22 8,22" fill="url(#g1)" opacity="0.35"/>
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#00d4ff"/>
+              <stop offset="100%" stop-color="#1a6fd8"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      ELEVATE
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#portfolio">Work</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#estimator">Estimator</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact" class="nav-cta">Get a Quote</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <button class="close-menu" id="close-menu" aria-label="Close menu">✕</button>
+    <a href="#services" class="mm-link">Services</a>
+    <a href="#portfolio" class="mm-link">Work</a>
+    <a href="#process" class="mm-link">Process</a>
+    <a href="#pricing" class="mm-link">Pricing</a>
+    <a href="#estimator" class="mm-link">Estimator</a>
+    <a href="#about" class="mm-link">About</a>
+    <a href="#contact" class="mm-link">Contact</a>
+  </div>
+
+  <section id="hero">
+    <canvas id="particles-canvas"></canvas>
+    <div class="hero-bg"></div>
+    <div class="grid-overlay"></div>
+    <div class="hero-diagonal"></div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        South Africa's Premier Web Design
+      </div>
+      <h1>
+        ELEVATE<br>
+        YOUR <span class="accent">BUSINESS</span><br>
+        <span class="outline">
+          <span class="typing-wrapper">
+            <span class="typing-text" id="typing-el">ONLINE.</span><span class="typing-cursor"></span>
+          </span>
+        </span>
+      </h1>
+      <p class="hero-sub">
+        Modern, responsive websites built for South African small businesses that want to stand out, get found, and grow — without the agency price tag.
+      </p>
+      <div class="hero-metrics">
+        <div class="hero-metric">
+          <div class="hero-metric-num">48h</div>
+          <div class="hero-metric-label">Turnaround</div>
+        </div>
+        <div class="hero-metric-divider"></div>
+        <div class="hero-metric">
+          <div class="hero-metric-num">R500</div>
+          <div class="hero-metric-label">1st Client Discount</div>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <a href="#estimator" class="btn-primary">
+          Get an Instant Estimate
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#portfolio" class="btn-secondary">See My Work</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="device-mockup">
+        <div class="browser-frame bf-main">
+          <div class="browser-bar">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+          </div>
+          <div class="browser-content">
+            <div class="bc-nav"></div>
+            <div class="bc-hero-strip">YOUR BUSINESS ONLINE</div>
+            <div class="bc-row">
+              <div class="bc-block" style="flex:2;height:60px;"></div>
+              <div class="bc-block" style="flex:1;height:60px;"></div>
+            </div>
+            <div class="bc-row">
+              <div class="bc-block" style="flex:1;height:45px;"></div>
+              <div class="bc-block" style="flex:1;height:45px;"></div>
+              <div class="bc-block" style="flex:1;height:45px;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="browser-frame bf-mobile">
+          <div class="browser-bar" style="padding:0 6px;gap:4px;">
+            <div class="dot dot-r" style="width:6px;height:6px;"></div>
+            <div class="dot dot-y" style="width:6px;height:6px;"></div>
+            <div class="dot dot-g" style="width:6px;height:6px;"></div>
+          </div>
+          <div class="browser-content" style="padding:0.6rem;gap:6px;">
+            <div class="bc-nav"></div>
+            <div class="bc-hero-strip" style="height:60px;font-size:0.7rem;padding:0 8px;">MOBILE READY</div>
+            <div class="bc-block" style="height:30px;"></div>
+            <div class="bc-block" style="height:30px;"></div>
+            <div class="bc-block" style="height:30px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="services">
+    <span class="section-label reveal">What I Offer</span>
+    <h2 class="section-title reveal">BUILT FOR <span class="accent">IMPACT.</span></h2>
+    <p class="section-sub reveal">Everything your business needs to succeed online — under one roof.</p>
+    <div class="services-grid reveal">
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <h3>Custom Website Design</h3>
+        <p>Tailored websites built from scratch to match your brand identity and speak directly to your target audience.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+        <h3>Mobile Friendly</h3>
+        <p>Responsive designs that look flawless and function perfectly on every device — phones, tablets, and desktops.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <h3>Fast &amp; Performant</h3>
+        <p>Speed-optimised sites that load in seconds, keeping visitors engaged and improving your search rankings.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div>
+        <h3>SEO Basic Setup</h3>
+        <p>Built-in SEO best practices from day one — so your business gets found by the people searching for you.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+        <h3>Ongoing Support</h3>
+        <p>I don't disappear after launch. Ongoing maintenance, updates, and support to keep your site running smoothly.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="portfolio">
+    <div class="portfolio-intro">
+      <div>
+        <span class="section-label reveal">Real Work</span>
+        <h2 class="section-title reveal">CLIENT <span class="accent">WEBSITES.</span></h2>
+        <p class="section-sub reveal" style="margin-bottom:0;">Live sites built for real South African businesses — click to visit.</p>
+      </div>
+    </div>
+    <div class="portfolio-grid reveal">
+      <div class="portfolio-item">
+        <div class="portfolio-preview" style="padding:0;overflow:hidden;">
+          <img src="earthenglaze.png" alt="Earthen Glaze website" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
+        </div>
+        <div class="portfolio-overlay">
+          <span class="portfolio-tag" style="color:#c87828;border-color:rgba(200,120,40,0.35);">Ceramics &amp; Craft</span>
+          <h3>Earthen Glaze</h3>
+          <p>Handmade pottery website with full product catalogue, session bookings, WhatsApp ordering &amp; Firebase backend</p>
+          <a href="https://earthenglaze.co.za" target="_blank" rel="noopener" class="portfolio-link">View Live Site <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+        </div>
+      </div>
+      <div class="portfolio-item">
+        <div class="portfolio-preview" style="padding:0;overflow:hidden;">
+          <img src="ttc.png" alt="Terrific Tutoring Centre website" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
+        </div>
+        <div class="portfolio-overlay">
+          <span class="portfolio-tag" style="color:#4dc464;border-color:rgba(60,180,80,0.4);">Education</span>
+          <h3>Terrific Tutoring Centre</h3>
+          <p>Full education hub with online enrolment, programme packages, aftercare registration &amp; academic evaluation booking</p>
+          <a href="https://terrifictutoringcentre.co.za" target="_blank" rel="noopener" class="portfolio-link">View Live Site <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <section id="process">
+    <span class="section-label reveal">How It Works</span>
+    <h2 class="section-title reveal">FROM IDEA TO <span class="accent">LIVE.</span></h2>
+    <p class="section-sub reveal">A streamlined process that keeps you informed every step of the way.</p>
+    <div class="process-steps">
+      <div class="step reveal"><div class="step-num">01</div><h3>Discovery Call</h3><p>We talk about your business, your goals, and what you need from your website.</p></div>
+      <div class="step reveal"><div class="step-num">02</div><h3>Design &amp; Plan</h3><p>I create a tailored design proposal and plan the structure of your site.</p></div>
+      <div class="step reveal"><div class="step-num">03</div><h3>Build &amp; Refine</h3><p>Your website is built and refined through your feedback until it's perfect.</p></div>
+      <div class="step reveal"><div class="step-num">04</div><h3>Launch &amp; Grow</h3><p>We go live and I stay on hand to support your online growth journey.</p></div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <span class="section-label reveal">Investment</span>
+    <h2 class="section-title reveal">TRANSPARENT <span class="accent">PRICING.</span></h2>
+    <p class="section-sub reveal">Affordable packages for South African small businesses. No hidden fees, no surprises.</p>
+    <div class="pricing-grid">
+      <div class="price-card reveal">
+        <div class="plan-name">Starter</div>
+        <div class="plan-desc">Perfect for getting started online</div>
+        <div class="plan-price"><sup>R</sup>3,500</div>
+        <div class="plan-period">once-off</div>
+        <ul class="plan-features">
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>1–3 Page Website</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Mobile Responsive</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Contact Form</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Basic Google &amp; SEO Setup</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>2 Rounds of Revisions</li>
+        </ul>
+        <a href="#contact" class="plan-cta">Get Started</a>
+      </div>
+      <div class="price-card featured reveal">
+        <div class="featured-badge">Most Popular</div>
+        <div class="plan-name">Professional</div>
+        <div class="plan-desc">For businesses serious about growth</div>
+        <div class="plan-price accent-price"><sup>R</sup>7,500</div>
+        <div class="plan-period">once-off</div>
+        <ul class="plan-features">
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>5–7 Page Website</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Mobile Responsive</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Advanced SEO Setup</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Google Analytics</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>WhatsApp Integration</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>4 Rounds of Revisions</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>1 Month Support</li>
+        </ul>
+        <a href="#contact" class="plan-cta">Get Started</a>
+      </div>
+      <div class="price-card reveal">
+        <div class="plan-name">Premium</div>
+        <div class="plan-desc">Full-scale digital presence</div>
+        <div class="plan-price"><sup>R</sup>14,000</div>
+        <div class="plan-period">once-off</div>
+        <ul class="plan-features">
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Unlimited Pages</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Booking / Enquiry System</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Full SEO Package</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Custom Domain Setup</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Firebase Backend Integration</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Up to 8 Revision Rounds</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>3 Months Support</li>
+        </ul>
+        <a href="#contact" class="plan-cta">Get Started</a>
+      </div>
+    </div>
+    <p class="price-note reveal">All prices in ZAR · Custom quotes available · First-time clients get R500 off · Let's chat</p>
+    <p class="price-note reveal" style="margin-top:0.6rem;">Need something custom? Contact us for a personalised quote.</p>
+  </section>
+
+  <section id="care">
+    <span class="section-label reveal">Keep It Running</span>
+    <h2 class="section-title reveal">HOSTING &amp; <span class="accent">CARE PLANS.</span></h2>
+    <p class="section-sub reveal">Your website launch is just the start. Let me keep it fast, secure and up to date every month.</p>
+    <div class="pricing-grid care-grid">
+      <div class="price-card reveal">
+        <div class="plan-name">Website Care</div>
+        <div class="plan-desc">Keeps your site online, secure and backed up</div>
+        <div class="plan-price"><sup>R</sup>299</div>
+        <div class="plan-period">per month</div>
+        <ul class="plan-features">
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Website Hosting</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>SSL Certificate</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Automated Backups</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Security Updates</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Minor Content Changes</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Technical Support</li>
+        </ul>
+        <a href="#contact" class="plan-cta">Add This Plan</a>
+      </div>
+      <div class="price-card featured reveal">
+        <div class="featured-badge">Best Value</div>
+        <div class="plan-name">Business Care</div>
+        <div class="plan-desc">For businesses that want their site actively looked after</div>
+        <div class="plan-price accent-price"><sup>R</sup>499</div>
+        <div class="plan-period">per month</div>
+        <ul class="plan-features">
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Everything in Website Care</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Priority Support</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Monthly Site Updates</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Minor Design Changes</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>Performance Monitoring</li>
+          <li><div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>SEO Monitoring</li>
+        </ul>
+        <a href="#contact" class="plan-cta">Add This Plan</a>
+      </div>
+    </div>
+    <p class="price-note reveal">Care plans are optional and billed monthly · Cancel anytime · Available for any package</p>
+  </section>
+
+  <section id="compare">
+    <span class="section-label reveal">Why Choose Me</span>
+    <h2 class="section-title reveal">ELEVATE VS <span class="accent">THE REST.</span></h2>
+    <p class="section-sub reveal">See how working with me directly compares to a big agency or a DIY website builder.</p>
+    <div class="reveal" style="overflow-x:auto;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th style="text-align:left;">Feature</th>
+            <th class="elevate-col">⚡ Elevate</th>
+            <th>Big Agency</th>
+            <th>DIY Builder</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Custom Design (not templates)</td><td class="elevate-col"><span class="compare-yes">✓</span></td><td><span class="compare-yes">✓</span></td><td><span class="compare-no">✗</span></td></tr>
+          <tr><td>Affordable SA Pricing</td><td class="elevate-col"><span class="compare-yes">✓</span></td><td><span class="compare-no">✗</span></td><td><span class="compare-yes">✓</span></td></tr>
+          <tr><td>Direct Personal Service</td><td class="elevate-col"><span class="compare-yes">✓</span></td><td><span class="compare-no">✗</span></td><td><span class="compare-no">✗</span></td></tr>
+          <tr><td>Fast 48h Turnaround</td><td class="elevate-col"><span class="compare-yes">✓</span></td><td><span class="compare-no">✗</span></td><td>Partial</td></tr>
+          <tr><td>SEO Built-in</td><td class="elevate-col"><span class="compare-yes">✓</span></td><td><span class="compare-yes">✓</span></td><td>Basic</td></tr>
+          <tr><td>WhatsApp Integration</td><td class="elevate-col"><span class="compare-yes">✓</span></td><td>Extra Cost</td><td><span class="compare-no">✗</span></td></tr>
+          <tr><td>Ongoing Support Included</td><td class="elevate-col"><span class="compare-yes">✓</span></td><td>Expensive</td><td><span class="compare-no">✗</span></td></tr>
+          <tr><td>Understands SA Market</td><td class="elevate-col"><span class="compare-yes">✓</span></td><td>Sometimes</td><td><span class="compare-no">✗</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       LIVE COST ESTIMATOR
+  ═══════════════════════════════════════ -->
+  <section id="estimator">
+    <span class="section-label reveal">Instant Estimate</span>
+    <h2 class="section-title reveal">WHAT WILL YOUR SITE <span class="accent">COST?</span></h2>
+    <p class="section-sub reveal">Answer a few simple questions below — no technical knowledge needed. Your price updates live as you go, and it's free to try.</p>
+
+    <div class="estimator-wrap reveal">
+
+      <div class="est-controls">
+
+        <div class="est-group">
+          <div class="est-group-title">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            Your Website Basics
+          </div>
+          <div class="slider-row">
+            <div class="slider-label-row">
+              <span class="slider-label">How many pages do you need?</span>
+              <span class="slider-val" id="val-pages">3</span>
+            </div>
+            <input type="range" class="est-range" id="sl-pages" min="1" max="12" value="3" step="1">
+            <p class="slider-help">A "page" is one screen on your site — e.g. Home, About, Services, Contact. Most small businesses need 3–5.</p>
+          </div>
+          <div class="slider-row">
+            <div class="slider-label-row">
+              <span class="slider-label">How many rounds of changes?</span>
+              <span class="slider-val" id="val-revisions">2</span>
+            </div>
+            <input type="range" class="est-range" id="sl-revisions" min="1" max="10" value="2" step="1">
+            <p class="slider-help">After I build a first draft, this is how many times you can ask for edits before it's final.</p>
+          </div>
+          <div class="slider-row" style="margin-bottom:0;">
+            <div class="slider-label-row">
+              <span class="slider-label">How soon do you need it live?</span>
+              <span class="slider-val" id="val-urgency">2</span>
+            </div>
+            <input type="range" class="est-range" id="sl-urgency" min="1" max="8" value="2" step="1">
+            <p class="slider-help">Choose your ideal timeline in weeks. Need it sooner rather than later? A small rush fee may apply.</p>
+          </div>
+        </div>
+
+        <div class="est-group">
+          <div class="est-group-title">
+            <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            Extra Features You'd Like
+          </div>
+          <p class="est-group-sub">Tick anything that sounds useful for your business — you can always add more later.</p>
+          <div class="feature-grid" id="feature-grid">
+            <div class="feature-toggle" data-price="800" data-label="Contact Form">
+              <div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>
+              <div class="ft-text"><span class="ft-label">Contact Form</span><span class="ft-desc">A form so visitors can message you directly from the site</span></div>
+            </div>
+            <div class="feature-toggle" data-price="1200" data-label="Booking System">
+              <div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>
+              <div class="ft-text"><span class="ft-label">Booking System</span><span class="ft-desc">Let customers book appointments or sessions online</span></div>
+            </div>
+            <div class="feature-toggle" data-price="600" data-label="WhatsApp Integration">
+              <div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>
+              <div class="ft-text"><span class="ft-label">WhatsApp Integration</span><span class="ft-desc">A one-tap button so visitors can chat to you on WhatsApp</span></div>
+            </div>
+            <div class="feature-toggle" data-price="900" data-label="Google Maps & Business">
+              <div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>
+              <div class="ft-text"><span class="ft-label">Google Maps &amp; Business</span><span class="ft-desc">Shows your location and opening hours so people can find you</span></div>
+            </div>
+            <div class="feature-toggle" data-price="1500" data-label="SEO Package">
+              <div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>
+              <div class="ft-text"><span class="ft-label">SEO Package</span><span class="ft-desc">Helps your site show up higher when people search Google</span></div>
+            </div>
+            <div class="feature-toggle" data-price="700" data-label="Photo Gallery">
+              <div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>
+              <div class="ft-text"><span class="ft-label">Photo Gallery</span><span class="ft-desc">A gallery page to show off your products, work or space</span></div>
+            </div>
+            <div class="feature-toggle" data-price="1000" data-label="Blog / News Section">
+              <div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>
+              <div class="ft-text"><span class="ft-label">Blog / News Section</span><span class="ft-desc">A place to post updates, news or articles over time</span></div>
+            </div>
+            <div class="feature-toggle" data-price="800" data-label="Google Analytics">
+              <div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>
+              <div class="ft-text"><span class="ft-label">Google Analytics</span><span class="ft-desc">See how many people visit your site and what they look at</span></div>
+            </div>
+            <div class="feature-toggle" data-price="1100" data-label="Online Data Storage">
+              <div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>
+              <div class="ft-text"><span class="ft-label">Online Data Storage</span><span class="ft-desc">Powers things like saved bookings, forms or a login area</span></div>
+            </div>
+            <div class="feature-toggle" data-price="500" data-label="Social Media Links">
+              <div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>
+              <div class="ft-text"><span class="ft-label">Social Media Links</span><span class="ft-desc">Buttons linking to your Facebook, Instagram and more</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="est-group">
+          <div class="est-group-title">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+            Ongoing Care Plan (optional)
+          </div>
+          <p class="est-group-sub">Keeps your site online, secure and looked after every month. This is billed separately from the once-off build cost above — add it now or decide later.</p>
+          <div class="care-grid" id="care-grid">
+            <div class="care-toggle selected" data-price="0" data-label="No care plan">
+              <div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>
+              <div class="ft-text"><span class="ft-label">No thanks</span><span class="ft-desc">I'll sort hosting and updates myself, or decide later</span></div>
+            </div>
+            <div class="care-toggle" data-price="299" data-label="Website Care — R299/mo">
+              <div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>
+              <div class="ft-text"><span class="ft-label">Website Care — R299/mo</span><span class="ft-desc">Hosting, SSL, backups, security updates &amp; minor content changes</span></div>
+            </div>
+            <div class="care-toggle" data-price="499" data-label="Business Care — R499/mo">
+              <div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>
+              <div class="ft-text"><span class="ft-label">Business Care — R499/mo</span><span class="ft-desc">Everything in Website Care, plus priority support &amp; monthly updates</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="est-result">
+        <div>
+          <div class="est-badge"><span class="est-badge-dot"></span> Live Estimate</div>
+        </div>
+        <div class="est-price-display">
+          <div class="est-price-from">Estimated from</div>
+          <div class="est-price-num" id="est-low">R3,500</div>
+          <div class="est-price-to">up to <span id="est-high">R4,200</span></div>
+        </div>
+        <div class="est-breakdown" id="est-breakdown">
+          <div class="est-line">
+            <span class="est-line-label">Website build (your pages)</span>
+            <span class="est-line-val" id="est-base-val">R3,000</span>
+          </div>
+          <div class="est-line">
+            <span class="est-line-label">Extra features you picked</span>
+            <span class="est-line-val" id="est-features-val">R0</span>
+          </div>
+          <div class="est-line">
+            <span class="est-line-label">Extra rounds of changes</span>
+            <span class="est-line-val" id="est-rev-val">R0</span>
+          </div>
+          <div class="est-line">
+            <span class="est-line-label">Rush fee (faster delivery)</span>
+            <span class="est-line-val" id="est-urgency-val">R0</span>
+          </div>
+          <div class="est-line total">
+            <span class="est-line-label">Your total estimate</span>
+            <span class="est-line-val" id="est-total-val">R3,000</span>
+          </div>
+        </div>
+        <div class="est-care-line" id="est-care-line" hidden>
+          <span>Plus ongoing care</span>
+          <strong id="est-care-val">R299/mo</strong>
+        </div>
+        <p class="est-note">This is a ballpark price, not a bill. Add your details below and I'll send your exact quote and message you on WhatsApp — no obligation.</p>
+        <div class="est-contact-fields">
+          <div class="form-group">
+            <label for="est-name">Your Name</label>
+            <input type="text" id="est-name" placeholder="Jane Smith">
+          </div>
+          <div class="form-group">
+            <label for="est-phone">WhatsApp Number</label>
+            <input type="tel" id="est-phone" placeholder="082 000 0000">
+          </div>
+        </div>
+        <button class="est-cta" id="est-cta-btn">
+          Send Me This Quote
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="about-grid">
+      <div class="about-visual reveal">
+        <div class="about-card about-main-card">
+          <div class="line-block blue" style="width:80%;"></div>
+          <div class="line-block" style="width:100%;"></div>
+          <div class="line-block" style="width:65%;"></div>
+          <div class="line-block blue short"></div>
+          <div class="line-block" style="width:90%;"></div>
+          <div class="about-live-row">
+            <div class="live-badge">LIVE SITE</div>
+            <div class="live-square"></div>
+          </div>
+        </div>
+        <div class="about-float-card">
+          <div class="float-line full"></div>
+          <div class="float-line short70"></div>
+          <div class="float-line short85"></div>
+        </div>
+      </div>
+      <div class="about-text">
+        <span class="section-label reveal">About</span>
+        <h2 class="section-title reveal">YOUR DIGITAL <span class="accent">PARTNER.</span></h2>
+        <p class="lead reveal">I'm a South African web designer passionate about helping small businesses build a powerful online presence — without spending a fortune.</p>
+        <p class="body-text reveal">Every business deserves a website that works as hard as they do. I combine modern design, technical performance, and a deep understanding of the South African market to deliver websites that don't just look good — they deliver real results.</p>
+        <ul class="value-list reveal">
+          <li><div class="v-dot"></div>Affordable, transparent pricing</li>
+          <li><div class="v-dot"></div>Personal service — you deal with me directly</li>
+          <li><div class="v-dot"></div>Fast turnaround, no agency delays</li>
+          <li><div class="v-dot"></div>Built for South African businesses</li>
+        </ul>
+        <a href="#contact" class="btn-primary reveal">Work With Me <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider-down">
+    <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="0,0 1440,0 1440,48 0,0" fill="#070e1a"/>
+    </svg>
+  </div>
+
+  <section id="skills">
+    <span class="section-label reveal">My Toolkit</span>
+    <h2 class="section-title reveal">BUILT WITH THE <span class="accent">RIGHT TOOLS.</span></h2>
+    <p class="section-sub reveal">Every site I build uses proven, modern technologies — no bloated page builders, no lock-in.</p>
+    <div class="tech-grid reveal">
+      <div class="tech-card">
+        <div class="tech-card-icon"><svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+        <div class="tech-card-body"><strong>HTML, CSS &amp; JavaScript</strong><span>Clean, hand-crafted code that loads fast and ranks well on Google.</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <div class="tech-card-body"><strong>Firebase Hosting</strong><span>Fast, secure, globally distributed hosting — your site stays online 24/7.</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+        <div class="tech-card-body"><strong>Firestore Database</strong><span>Real-time data storage for contact forms, bookings, and lead capture.</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div>
+        <div class="tech-card-body"><strong>Google SEO &amp; Analytics</strong><span>Built-in Search Console setup and Analytics so you can see real traffic data.</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.16 6.16l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg></div>
+        <div class="tech-card-body"><strong>WhatsApp Integration</strong><span>One-tap WhatsApp contact so customers reach you the way they prefer.</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div class="tech-card-body"><strong>Google Maps &amp; Business</strong><span>Show your location and hours so local customers can find and trust you.</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+        <div class="tech-card-body"><strong>Mobile-First Design</strong><span>Every site is designed for phones first — where 70% of SA web traffic comes from.</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div class="tech-card-body"><strong>EmailJS Integration</strong><span>Instant email notifications for form submissions — no server needed.</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon"><svg viewBox="0 0 24 24"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg></div>
+        <div class="tech-card-body"><strong>Git &amp; GitHub</strong><span>Every project is version-controlled, so nothing is ever lost and changes are always tracked.</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <div class="tech-card-body"><strong>Custom Domain &amp; DNS</strong><span>I handle domain connection and DNS setup so yourbusiness.co.za just works.</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <div class="tech-card-body"><strong>Performance Optimisation</strong><span>Compressed images and lean code for fast load times and better Google rankings.</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="tech-card-body"><strong>Secure By Default</strong><span>Free SSL/HTTPS and locked-down Firebase security rules on every site I build.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="contact-grid">
+      <div>
+        <span class="section-label reveal">Get In Touch</span>
+        <h2 class="section-title reveal">LET'S BUILD <span class="accent">SOMETHING.</span></h2>
+        <p class="section-sub reveal" style="margin-bottom:2rem;">Ready to elevate your business online? Drop me a message and I'll get back to you within 24 hours.</p>
+        <div class="contact-info">
+          <div class="contact-item reveal">
+            <div class="contact-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.16 6.16l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg></div>
+            <div><div class="contact-item-label">Phone / WhatsApp</div><div class="contact-item-val">082 536 8312</div></div>
+          </div>
+          <div class="contact-item reveal">
+            <div class="contact-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+            <div><div class="contact-item-label">Email</div><div class="contact-item-val">elevatewebdesigns26@gmail.com</div></div>
+          </div>
+          <div class="contact-item reveal">
+            <div class="contact-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+            <div><div class="contact-item-label">Website</div><div class="contact-item-val">www.elevatewebdesign.co.za</div></div>
+          </div>
+          <div class="contact-item reveal">
+            <div class="contact-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            <div><div class="contact-item-label">Location</div><div class="contact-item-val">South Africa (serving nationwide)</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="contact-form">
+          <div class="form-row">
+            <div class="form-group"><label for="name">Your Name</label><input type="text" id="name" placeholder="Jane Smith"></div>
+            <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" placeholder="082 000 0000"></div>
+          </div>
+          <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" placeholder="jane@yourbusiness.co.za"></div>
+          <div class="form-group">
+            <label for="package">Package Interested In</label>
+            <select id="package">
+              <option value="">Select a package...</option>
+              <option>Starter — R3,500</option>
+              <option>Professional — R7,500</option>
+              <option>Premium — R14,000</option>
+              <option>Custom Quote</option>
+            </select>
+            <p class="custom-quote-hint" id="custom-quote-hint" hidden>
+              Based on your answers in the estimator above: <strong id="custom-quote-amount">R3,500 – R4,200</strong>
+              — <a href="#estimator">adjust it</a>
+            </p>
+          </div>
+          <div class="form-group"><label for="message">Tell Me About Your Business</label><textarea id="message" placeholder="What does your business do? What are your goals for your website?"></textarea></div>
+          <button class="submit-btn" id="submit-btn">
+            Send Message
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">ELEVATE WEB DESIGN</div>
+        <div class="footer-tagline">Elevate Your Business · Elevate Your Future</div>
+        <p class="footer-desc">Affordable, professional websites for South African small businesses. Based in South Africa — serving clients nationwide.</p>
+      </div>
+      <div class="footer-links-col">
+        <div class="footer-col-title">Quick Links</div>
+        <a href="#services">Services</a>
+        <a href="#portfolio">Work</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#estimator">Estimator</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="footer-links-col">
+        <div class="footer-col-title">Contact</div>
+        <a href="tel:+27825368312">082 536 8312</a>
+        <a href="mailto:elevatewebdesigns26@gmail.com">elevatewebdesigns26@gmail.com</a>
+        <a href="https://wa.me/27825368312" target="_blank" rel="noopener">WhatsApp Us</a>
+        <a href="https://www.elevatewebdesign.co.za">www.elevatewebdesign.co.za</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Elevate Web Design · South Africa · All rights reserved</div>
+      <div class="footer-legal">
+        <button type="button" class="footer-legal-link" id="privacy-link">Privacy Policy</button>
+        <span>·</span>
+        <span>Committed to protecting your information under POPIA</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════
+       PRIVACY POLICY MODAL
+  ═══════════════════════════════════════ -->
+  <div class="privacy-overlay" id="privacy-overlay">
+    <div class="privacy-modal">
+      <button class="privacy-close" id="privacy-close" aria-label="Close">✕</button>
+      <h3>Privacy Policy</h3>
+      <p class="privacy-updated">Last updated: 27 August 2026</p>
+
+      <h4>What I collect</h4>
+      <p>When you submit the contact form on this site, I collect the name, phone number, email address, package selection and message you provide. No other personal data is collected automatically — this site does not use tracking cookies or third-party analytics.</p>
+
+      <h4>Why I collect it</h4>
+      <p>Solely to respond to your enquiry, prepare a quote, and communicate with you about your project. Your details are never sold, rented, or shared with third parties for marketing purposes.</p>
+
+      <h4>Where it's stored</h4>
+      <p>Submissions are stored securely in Google Firebase (Cloud Firestore), encrypted in transit. Only I have access to this data — it cannot be read, listed, or exported by site visitors.</p>
+
+      <h4>Your rights (POPIA)</h4>
+      <p>Under South Africa's Protection of Personal Information Act, you have the right to request access to, correction of, or deletion of any personal information I hold about you. To do so, email <a href="mailto:elevatewebdesigns26@gmail.com">elevatewebdesigns26@gmail.com</a> and I'll action your request within a reasonable time.</p>
+
+      <h4>Questions</h4>
+      <p>If you have any questions about this policy or how your data is handled, contact me directly on <a href="mailto:elevatewebdesigns26@gmail.com">elevatewebdesigns26@gmail.com</a> or <a href="https://wa.me/27825368312" target="_blank" rel="noopener">WhatsApp</a>.</p>
+    </div>
+  </div>
+
+  <div id="toast">
+    <div class="toast-icon">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="toast-body">
+      <strong id="toast-title">Message received!</strong>
+      <span id="toast-msg">I'll get back to you within 24 hours.</span>
+    </div>
+  </div>
+
+  <div id="whatsapp-float">
+    <span class="wa-tooltip">Chat on WhatsApp 💬</span>
+    <a class="wa-bubble" href="https://wa.me/27825368312?text=Hi%2C%20I%27d%20like%20a%20quote%20for%20a%20website!" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+    </a>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

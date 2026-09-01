@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Elevate Web Design</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,8 92,88 8,88' fill='none' stroke='%2300d4ff' stroke-width='7' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+  <!-- Installable-app metadata — required by iOS before "Add to Home Screen"
+       creates a real standalone app rather than just a bookmark, which is
+       what makes push notifications possible on iPhone at all. -->
+  <link rel="manifest" href="/admin-manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Elevate Admin">
+  <meta name="theme-color" content="#070e1a">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- ═══ LOGIN VIEW ═══ -->
+  <div id="login-view" class="auth-wrap">
+    <form id="login-form" class="auth-card">
+      <div class="auth-logo">ELEVATE <span class="accent">ADMIN</span></div>
+      <p class="auth-sub">Sign in to manage your leads.</p>
+
+      <div class="form-group">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" autocomplete="username" required>
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" autocomplete="current-password" required>
+      </div>
+
+      <button type="submit" class="auth-btn" id="login-btn">Sign In</button>
+      <button type="button" class="auth-link" id="forgot-btn">Forgot password?</button>
+      <p class="auth-error" id="login-error"></p>
+    </form>
+  </div>
+
+  <!-- ═══ DASHBOARD VIEW ═══ -->
+  <div id="dash-view" class="dash-wrap" hidden>
+
+    <header class="dash-header">
+      <div class="dash-logo">ELEVATE <span class="accent">ADMIN</span></div>
+      <div class="dash-header-actions">
+        <button class="alerts-btn" id="push-btn">📲 Enable Push (works when closed)</button>
+        <button class="alerts-btn" id="alerts-btn" hidden>🔔 Enable Desktop Alerts</button>
+        <button class="bell-btn" id="bell-btn" title="New leads since you last checked">
+          🔔<span class="bell-badge" id="unread-badge" hidden>0</span>
+        </button>
+        <button class="logout-btn" id="logout-btn">Log Out</button>
+      </div>
+    </header>
+
+    <main class="dash-main">
+
+      <section class="stats-row" id="stats-row">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total">0</div>
+          <div class="stat-label">Total Leads</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-week">0</div>
+          <div class="stat-label">This Week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-month">0</div>
+          <div class="stat-label">This Month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-top-package">—</div>
+          <div class="stat-label">Top Package</div>
+        </div>
+      </section>
+
+      <section class="toolbar">
+        <input type="text" id="search-input" class="search-input" placeholder="Search by name, email, or message...">
+        <select id="status-filter" class="status-filter">
+          <option value="">All statuses</option>
+          <option value="New">New</option>
+          <option value="Contacted">Contacted</option>
+          <option value="Won">Won</option>
+          <option value="Lost">Lost</option>
+        </select>
+        <button class="refresh-btn" id="refresh-btn" title="Refresh">⟳</button>
+      </section>
+
+      <section id="leads-list" class="leads-list">
+        <p class="empty-state" id="empty-state">Loading leads…</p>
+      </section>
+
+    </main>
+  </div>
+
+  <div id="lead-toast" class="lead-toast" hidden>
+    <div class="lead-toast-icon">🔔</div>
+    <div class="lead-toast-body">
+      <strong id="lead-toast-title">New lead!</strong>
+      <span id="lead-toast-msg"></span>
+    </div>
+  </div>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>
