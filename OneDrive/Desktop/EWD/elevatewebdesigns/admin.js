@@ -44,11 +44,15 @@ onAuthStateChanged(auth, user => {
   if (user) {
     loginView.hidden = true;
     dashView.hidden  = false;
+    // Land at the top of the dashboard — otherwise the browser keeps
+    // whatever scroll position the login screen was left at.
+    window.scrollTo(0, 0);
     loadLeads();
     startIdleTimer();
   } else {
     loginView.hidden = false;
     dashView.hidden  = true;
+    window.scrollTo(0, 0);
     stopIdleTimer();
     if (leadsUnsub) { leadsUnsub(); leadsUnsub = null; }
     allLeads = [];
@@ -348,6 +352,167 @@ if (!('serviceWorker' in navigator) || !('PushManager' in window) || NOTIFY_WORK
     }
   });
 }
+
+/* ══════════════════════════════════════════
+   QUOTE CALCULATOR & GENERATOR
+   Uses the same shared pricing engine as the public estimator
+   (pricing.js), so a quote you send can never disagree with what a
+   visitor was shown on the site.
+══════════════════════════════════════════ */
+const PRICING = window.EWD_PRICING;
+const qFmt = PRICING.fmt;
+
+const quoteToggle  = document.getElementById('quote-toggle');
+const quoteBody    = document.getElementById('quote-body');
+const quoteChevron = document.getElementById('quote-chevron');
+const qFinal       = document.getElementById('q-final');
+const qResetBtn    = document.getElementById('q-reset');
+let finalTouched   = false;
+
+quoteToggle.addEventListener('click', () => {
+  const open = quoteBody.hidden;
+  quoteBody.hidden = !open;
+  quoteChevron.classList.toggle('open', open);
+  quoteToggle.setAttribute('aria-expanded', String(open));
+});
+
+/* Build the feature checkboxes and care-plan dropdown from the price list */
+document.getElementById('q-features').innerHTML = PRICING.FEATURES.map(f => `
+  <label class="quote-feature" data-id="${f.id}">
+    <input type="checkbox" value="${f.id}">
+    <span>${f.label}</span>
+    <span class="quote-feature-price">${qFmt(f.price)}</span>
+  </label>
+`).join('');
+
+document.getElementById('q-care').innerHTML = PRICING.CARE_PLANS.map(c =>
+  `<option value="${c.id}">${c.id === 'none' ? 'None' : `${c.shortLabel} — ${qFmt(c.price)}/mo`}</option>`
+).join('');
+
+function readQuoteForm() {
+  return {
+    client:     document.getElementById('q-client').value.trim(),
+    phone:      document.getElementById('q-phone').value.trim(),
+    pages:      Number(document.getElementById('q-pages').value) || 1,
+    revisions:  Number(document.getElementById('q-revisions').value) || 0,
+    urgency:    Number(document.getElementById('q-urgency').value) || 4,
+    featureIds: [...document.querySelectorAll('#q-features input:checked')].map(i => i.value),
+    carePlanId: document.getElementById('q-care').value,
+    firstTimeDiscount: document.getElementById('q-discount').checked,
+  };
+}
+
+function buildQuoteText(form, q, finalAmount) {
+  const B = PRICING.BUSINESS;
+  const today = new Date().toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric' });
+  const lines = [];
+
+  lines.push(`QUOTE — ${B.name}`);
+  if (form.client) lines.push(`For: ${form.client}`);
+  lines.push(`Date: ${today}`);
+  lines.push('');
+  lines.push('WEBSITE BUILD');
+  lines.push(`${form.pages} page website${form.pages === 1 ? '' : ''} — ${qFmt(q.baseAmt)}`);
+  q.features.forEach(f => lines.push(`${f.label} — ${qFmt(f.price)}`));
+  if (q.revAmt > 0) lines.push(`Extra rounds of changes (${form.revisions}) — ${qFmt(q.revAmt)}`);
+  if (q.urgencyAmt > 0) lines.push(`Faster delivery (${form.urgency} week${form.urgency === 1 ? '' : 's'}) — ${qFmt(q.urgencyAmt)}`);
+  if (q.discount > 0) lines.push(`First-time client discount — -${qFmt(q.discount)}`);
+  lines.push('');
+  lines.push(`TOTAL (once-off): ${qFmt(finalAmount)}`);
+
+  if (q.carePrice > 0) {
+    lines.push('');
+    lines.push('MONTHLY CARE PLAN (optional)');
+    lines.push(`${q.careLabel} — ${qFmt(q.carePrice)}/month`);
+  }
+
+  lines.push('');
+  lines.push(`Timeline: around ${form.urgency} week${form.urgency === 1 ? '' : 's'} from go-ahead.`);
+  lines.push('Quote valid for 30 days.');
+  lines.push('');
+  lines.push(B.name);
+  lines.push(`${B.phone} · ${B.email}`);
+  lines.push(B.website);
+
+  return lines.join('\n');
+}
+
+function updateQuote() {
+  const form = readQuoteForm();
+  const q = PRICING.calculate(form);
+
+  /* Breakdown */
+  const rows = [
+    ['Website build (' + form.pages + ' page' + (form.pages === 1 ? '' : 's') + ')', qFmt(q.baseAmt), ''],
+    ['Extra features (' + q.features.length + ')', qFmt(q.featureAmt), ''],
+    ['Extra rounds of changes', qFmt(q.revAmt), ''],
+    ['Rush fee' + (q.urgencyPct ? ` (+${Math.round(q.urgencyPct * 100)}%)` : ''), qFmt(q.urgencyAmt), ''],
+  ];
+  if (q.discount > 0) rows.push(['First-time client discount', '-' + qFmt(q.discount), 'discount']);
+  if (q.carePrice > 0) rows.push([q.careLabel, qFmt(q.carePrice) + '/mo', 'care']);
+
+  document.getElementById('q-breakdown').innerHTML = rows.map(([label, val, cls]) =>
+    `<div class="quote-line ${cls}"><span>${label}</span><span>${val}</span></div>`
+  ).join('');
+
+  /* Final amount — auto-syncs until the admin types their own figure */
+  if (!finalTouched) qFinal.value = q.low;
+  qResetBtn.hidden = !finalTouched;
+
+  const finalAmount = Number(qFinal.value) || 0;
+  document.getElementById('q-range').textContent =
+    `Calculated range: ${qFmt(q.low)} – ${qFmt(q.high)}` + (finalTouched ? ' (custom amount in use)' : '');
+
+  document.getElementById('q-text').value = buildQuoteText(form, q, finalAmount);
+}
+
+/* Any input change recalculates */
+['q-client', 'q-phone', 'q-pages', 'q-revisions', 'q-urgency', 'q-care', 'q-discount'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', updateQuote);
+  el.addEventListener('change', updateQuote);
+});
+document.querySelectorAll('#q-features input').forEach(cb => {
+  cb.addEventListener('change', () => {
+    cb.closest('.quote-feature').classList.toggle('on', cb.checked);
+    updateQuote();
+  });
+});
+qFinal.addEventListener('input', () => { finalTouched = true; updateQuote(); });
+qResetBtn.addEventListener('click', () => { finalTouched = false; updateQuote(); });
+
+document.getElementById('q-copy').addEventListener('click', async () => {
+  const btn = document.getElementById('q-copy');
+  const text = document.getElementById('q-text').value;
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    document.getElementById('q-text').select();
+    document.execCommand('copy');
+  }
+  const original = btn.textContent;
+  btn.textContent = 'Copied ✓';
+  setTimeout(() => { btn.textContent = original; }, 1800);
+});
+
+document.getElementById('q-whatsapp').addEventListener('click', () => {
+  const phone = document.getElementById('q-phone').value.trim();
+  const text  = document.getElementById('q-text').value;
+  const num   = toWhatsAppNumber(phone);
+  const base  = num ? `https://wa.me/${num}` : 'https://wa.me/';
+  window.open(`${base}?text=${encodeURIComponent(text)}`, '_blank');
+});
+
+/* 082 536 8312 / +27 82 536 8312 / 2782... all become 2782... */
+function toWhatsAppNumber(raw) {
+  const digits = String(raw || '').replace(/\D/g, '');
+  if (!digits) return '';
+  if (digits.startsWith('27')) return digits;
+  if (digits.startsWith('0'))  return '27' + digits.slice(1);
+  return '27' + digits;
+}
+
+updateQuote();
 
 function renderStats() {
   const now = new Date();

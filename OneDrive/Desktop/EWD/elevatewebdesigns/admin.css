@@ -210,6 +210,106 @@ body {
 .save-hint { font-size: 0.7rem; color: var(--gray); opacity: 0; transition: opacity 0.3s; }
 .save-hint.show { opacity: 1; }
 
+/* ── QUOTE CALCULATOR ── */
+.quote-section { margin-bottom: 1.5rem; }
+.quote-toggle {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  padding: 0.9rem 1.2rem; border-radius: 12px; cursor: pointer;
+  background: var(--navy-mid); border: 1px solid rgba(0,212,255,0.15);
+  color: var(--white); font-family: inherit; font-size: 0.95rem; font-weight: 600;
+  transition: border-color 0.2s;
+}
+.quote-toggle:hover { border-color: rgba(0,212,255,0.4); }
+.quote-chevron { color: var(--cyan); transition: transform 0.25s; }
+.quote-chevron.open { transform: rotate(180deg); }
+
+.quote-body {
+  background: var(--navy-mid); border: 1px solid rgba(0,212,255,0.15); border-top: none;
+  border-radius: 0 0 12px 12px; padding: 1.5rem;
+  margin-top: -6px;
+}
+.quote-grid { display: grid; grid-template-columns: 1fr 380px; gap: 1.75rem; align-items: start; }
+
+.quote-inputs { display: flex; flex-direction: column; gap: 1rem; }
+.quote-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.quote-field { flex: 1; min-width: 130px; display: flex; flex-direction: column; gap: 0.35rem; }
+.quote-field label { font-size: 0.72rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; }
+.quote-field input, .quote-field select {
+  padding: 0.6rem 0.75rem; background: var(--navy); border: 1px solid rgba(0,212,255,0.15);
+  border-radius: 8px; color: var(--white); font-size: 0.88rem; font-family: inherit; width: 100%;
+}
+.quote-field input:focus, .quote-field select:focus { outline: none; border-color: var(--cyan); }
+.quote-field select option { background: var(--navy-mid); }
+
+.quote-subhead { font-size: 0.72rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; }
+.quote-features { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+.quote-feature {
+  display: flex; align-items: flex-start; gap: 8px; padding: 0.5rem 0.7rem;
+  background: var(--navy); border: 1px solid rgba(0,212,255,0.1); border-radius: 8px;
+  cursor: pointer; font-size: 0.8rem; transition: all 0.15s; user-select: none;
+}
+.quote-feature:hover { border-color: rgba(0,212,255,0.3); }
+.quote-feature.on { border-color: rgba(0,212,255,0.5); background: rgba(0,212,255,0.08); }
+.quote-feature input { accent-color: var(--cyan); margin-top: 2px; flex-shrink: 0; }
+.quote-feature-price { color: var(--cyan); margin-left: auto; white-space: nowrap; font-size: 0.78rem; }
+.quote-check { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: rgba(255,255,255,0.75); cursor: pointer; }
+.quote-check input { accent-color: var(--cyan); }
+
+.quote-output { display: flex; flex-direction: column; gap: 0.9rem; }
+.quote-breakdown {
+  display: flex; flex-direction: column; gap: 0.45rem;
+  padding: 1rem; background: var(--navy); border-radius: 10px; border: 1px solid rgba(0,212,255,0.1);
+}
+.quote-line { display: flex; justify-content: space-between; font-size: 0.8rem; gap: 1rem; }
+.quote-line span:first-child { color: rgba(255,255,255,0.55); }
+.quote-line span:last-child { color: var(--white); white-space: nowrap; }
+.quote-line.discount span:last-child { color: var(--green); }
+.quote-line.care { border-top: 1px dashed rgba(0,212,255,0.2); padding-top: 0.45rem; margin-top: 0.2rem; }
+.quote-line.care span:last-child { color: var(--cyan); }
+
+.quote-final { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.quote-final-label { font-size: 0.78rem; color: var(--gray); display: flex; align-items: center; gap: 0.5rem; }
+.quote-reset {
+  background: none; border: none; color: var(--cyan); font-size: 0.7rem; cursor: pointer;
+  font-family: inherit; padding: 0; text-decoration: underline;
+}
+.quote-final-input {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--navy); border: 1px solid rgba(0,212,255,0.3); border-radius: 8px; padding: 0.4rem 0.7rem;
+}
+.quote-final-input span { color: var(--cyan); font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; }
+.quote-final-input input {
+  width: 110px; background: none; border: none; color: var(--cyan);
+  font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 0.5px;
+}
+.quote-final-input input:focus { outline: none; }
+.quote-range { font-size: 0.72rem; color: rgba(255,255,255,0.35); }
+
+.quote-text {
+  width: 100%; padding: 0.8rem; background: var(--navy);
+  border: 1px solid rgba(0,212,255,0.12); border-radius: 8px;
+  color: rgba(255,255,255,0.8); font-size: 0.75rem; line-height: 1.55;
+  font-family: 'Consolas', 'Menlo', monospace; resize: vertical;
+}
+.quote-text:focus { outline: none; border-color: rgba(0,212,255,0.35); }
+.quote-actions { display: flex; gap: 0.6rem; }
+.quote-btn {
+  flex: 1; padding: 0.7rem; border-radius: 8px; cursor: pointer; font-family: inherit;
+  font-size: 0.82rem; font-weight: 600; transition: all 0.2s;
+  background: none; border: 1px solid rgba(0,212,255,0.3); color: var(--cyan);
+}
+.quote-btn:hover { background: rgba(0,212,255,0.1); }
+.quote-btn.primary { background: linear-gradient(135deg, var(--blue), var(--cyan)); border: none; color: white; }
+.quote-btn.primary:hover { box-shadow: 0 0 20px rgba(0,212,255,0.3); }
+
+@media (max-width: 900px) {
+  .quote-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .quote-features { grid-template-columns: 1fr; }
+  .quote-body { padding: 1.1rem; }
+}
+
 @media (max-width: 600px) {
   .dash-header { padding: 1rem 6%; }
   .dash-main { padding: 1.5rem 6% 3rem; }

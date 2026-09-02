@@ -257,15 +257,31 @@ function notifyAdmin(name, pkg) {
 
 /* ══════════════════════════════════════════
    COST ESTIMATOR LOGIC
+   All prices and the calculation itself live in pricing.js, shared with
+   the manager app's quote calculator so the two can never disagree.
 ══════════════════════════════════════════ */
-const BASE_PER_PAGE = 700;
-const BASE_FLOOR    = 2500;
-const REV_COST      = 200;
-const URGENCY_MULT  = { 1: 0.30, 2: 0.15, 3: 0.10, 4: 0.05, 5: 0, 6: 0, 7: 0, 8: 0 };
+const PRICING = window.EWD_PRICING;
+const fmt = PRICING.fmt;
 
-function fmt(n) {
-  return 'R' + Math.round(n).toLocaleString('en-ZA');
+/* Build the feature and care-plan pickers from the shared price list. */
+function renderEstimatorOptions() {
+  const check = '<div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>';
+
+  document.getElementById('feature-grid').innerHTML = PRICING.FEATURES.map(f => `
+    <div class="feature-toggle" data-id="${f.id}">
+      ${check}
+      <div class="ft-text"><span class="ft-label">${f.label}</span><span class="ft-desc">${f.desc}</span></div>
+    </div>
+  `).join('');
+
+  document.getElementById('care-grid').innerHTML = PRICING.CARE_PLANS.map((c, i) => `
+    <div class="care-toggle${i === 0 ? ' selected' : ''}" data-id="${c.id}">
+      ${check}
+      <div class="ft-text"><span class="ft-label">${c.id === 'none' ? c.shortLabel : c.label}</span><span class="ft-desc">${c.desc}</span></div>
+    </div>
+  `).join('');
 }
+renderEstimatorOptions();
 
 // Kept up to date on every estimator change, so the contact form's
 // "Custom Quote" option can show the figure without recalculating it.
@@ -292,53 +308,40 @@ function calcEstimate() {
   const revisions = +document.getElementById('sl-revisions').value;
   const urgency   = +document.getElementById('sl-urgency').value;
 
-  const baseAmt    = Math.max(BASE_FLOOR, pages * BASE_PER_PAGE);
-  const revAmt     = Math.max(0, revisions - 2) * REV_COST;
+  const featureIds = [...document.querySelectorAll('.feature-toggle.selected')].map(ft => ft.dataset.id);
+  const careEl     = document.querySelector('.care-toggle.selected');
+  const carePlanId = careEl ? careEl.dataset.id : 'none';
 
-  let featureAmt   = 0;
-  const selFeatures = [];
-  document.querySelectorAll('.feature-toggle.selected').forEach(ft => {
-    featureAmt += parseInt(ft.dataset.price, 10);
-    selFeatures.push(ft.dataset.label);
-  });
+  const q = PRICING.calculate({ pages, revisions, urgency, featureIds, carePlanId });
 
-  const subtotal   = baseAmt + revAmt + featureAmt;
-  const urgencyAmt = subtotal * (URGENCY_MULT[urgency] || 0);
-  const total      = subtotal + urgencyAmt;
-  const low        = total;
-  const high       = total * 1.2;
-
-  // Care plan is billed monthly, separate from the once-off build cost above —
+  // Care plan is billed monthly, separate from the once-off build cost —
   // kept out of the low/high total so the two never get added together.
-  const careEl   = document.querySelector('.care-toggle.selected');
-  const carePrice = careEl ? parseInt(careEl.dataset.price, 10) : 0;
-  const careLabel = careEl ? careEl.dataset.label : 'No care plan';
-  const careLine  = document.getElementById('est-care-line');
-  if (carePrice > 0) {
-    document.getElementById('est-care-val').textContent = fmt(carePrice) + '/mo';
+  const careLine = document.getElementById('est-care-line');
+  if (q.carePrice > 0) {
+    document.getElementById('est-care-val').textContent = fmt(q.carePrice) + '/mo';
     careLine.hidden = false;
   } else {
     careLine.hidden = true;
   }
 
-  document.getElementById('est-low').textContent          = fmt(low);
-  document.getElementById('est-high').textContent         = fmt(high);
-  document.getElementById('est-base-val').textContent     = fmt(baseAmt);
-  document.getElementById('est-features-val').textContent = featureAmt > 0 ? fmt(featureAmt) : 'R0';
-  document.getElementById('est-rev-val').textContent      = revAmt > 0 ? fmt(revAmt) : 'R0';
-  document.getElementById('est-urgency-val').textContent  = urgencyAmt > 0 ? fmt(urgencyAmt) + ' (rush)' : 'R0';
-  document.getElementById('est-total-val').textContent    = fmt(low) + ' – ' + fmt(high);
+  document.getElementById('est-low').textContent          = fmt(q.low);
+  document.getElementById('est-high').textContent         = fmt(q.high);
+  document.getElementById('est-base-val').textContent     = fmt(q.baseAmt);
+  document.getElementById('est-features-val').textContent = q.featureAmt > 0 ? fmt(q.featureAmt) : 'R0';
+  document.getElementById('est-rev-val').textContent      = q.revAmt > 0 ? fmt(q.revAmt) : 'R0';
+  document.getElementById('est-urgency-val').textContent  = q.urgencyAmt > 0 ? fmt(q.urgencyAmt) + ' (rush)' : 'R0';
+  document.getElementById('est-total-val').textContent    = fmt(q.low) + ' – ' + fmt(q.high);
 
   document.getElementById('val-pages').textContent     = pages;
   document.getElementById('val-revisions').textContent = revisions;
   document.getElementById('val-urgency').textContent   = urgency + (urgency === 1 ? ' wk' : ' wks');
 
-  lastEstimate = { low: Math.round(low), high: Math.round(high), carePrice, careLabel };
+  lastEstimate = { low: q.low, high: q.high, carePrice: q.carePrice, careLabel: q.careLabel };
   updateCustomQuoteHint();
 
   return {
-    low: Math.round(low), high: Math.round(high), pages, revisions, urgency,
-    features: selFeatures, carePrice, careLabel
+    low: q.low, high: q.high, pages, revisions, urgency,
+    features: q.features.map(f => f.label), carePrice: q.carePrice, careLabel: q.careLabel
   };
 }
 

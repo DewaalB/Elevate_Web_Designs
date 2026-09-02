@@ -79,6 +79,84 @@
         </div>
       </section>
 
+      <!-- ═══ QUOTE CALCULATOR ═══ -->
+      <section class="quote-section">
+        <button class="quote-toggle" id="quote-toggle" aria-expanded="false">
+          <span>🧮 Quote Calculator</span>
+          <span class="quote-chevron" id="quote-chevron">▾</span>
+        </button>
+
+        <div class="quote-body" id="quote-body" hidden>
+          <div class="quote-grid">
+
+            <div class="quote-inputs">
+              <div class="quote-row">
+                <div class="quote-field">
+                  <label for="q-client">Client / business name</label>
+                  <input type="text" id="q-client" placeholder="Jane Smith">
+                </div>
+                <div class="quote-field">
+                  <label for="q-phone">WhatsApp number</label>
+                  <input type="tel" id="q-phone" placeholder="082 000 0000">
+                </div>
+              </div>
+
+              <div class="quote-row">
+                <div class="quote-field">
+                  <label for="q-pages">Pages</label>
+                  <input type="number" id="q-pages" value="3" min="1" max="50">
+                </div>
+                <div class="quote-field">
+                  <label for="q-revisions">Rounds of changes</label>
+                  <input type="number" id="q-revisions" value="2" min="0" max="20">
+                </div>
+                <div class="quote-field">
+                  <label for="q-urgency">Timeline (weeks)</label>
+                  <input type="number" id="q-urgency" value="4" min="1" max="12">
+                </div>
+              </div>
+
+              <div class="quote-subhead">Extra features</div>
+              <div class="quote-features" id="q-features"></div>
+
+              <div class="quote-row">
+                <div class="quote-field">
+                  <label for="q-care">Care plan</label>
+                  <select id="q-care"></select>
+                </div>
+              </div>
+
+              <label class="quote-check">
+                <input type="checkbox" id="q-discount">
+                First-time client discount (R500 off)
+              </label>
+            </div>
+
+            <div class="quote-output">
+              <div class="quote-breakdown" id="q-breakdown"></div>
+
+              <div class="quote-final">
+                <div class="quote-final-label">
+                  Quote this amount
+                  <button type="button" class="quote-reset" id="q-reset" hidden title="Reset to calculated amount">↺ reset</button>
+                </div>
+                <div class="quote-final-input">
+                  <span>R</span><input type="number" id="q-final" min="0" step="50">
+                </div>
+              </div>
+              <p class="quote-range" id="q-range"></p>
+
+              <textarea id="q-text" class="quote-text" rows="14" readonly></textarea>
+              <div class="quote-actions">
+                <button class="quote-btn primary" id="q-copy">Copy Quote</button>
+                <button class="quote-btn" id="q-whatsapp">Send on WhatsApp</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       <section class="toolbar">
         <input type="text" id="search-input" class="search-input" placeholder="Search by name, email, or message...">
         <select id="status-filter" class="status-filter">
@@ -106,6 +184,7 @@
     </div>
   </div>
 
+  <script src="pricing.js"></script>
   <script type="module" src="admin.js"></script>
 </body>
 </html>
