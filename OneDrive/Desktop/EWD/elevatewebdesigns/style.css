@@ -26,6 +26,15 @@ body {
   cursor: none;
 }
 
+.skip-link {
+  position:absolute; left:-9999px; top:0; z-index:10001;
+  background:var(--navy-mid); color:var(--cyan);
+  padding:0.8rem 1.4rem; border-radius:0 0 8px 0;
+  border:1px solid rgba(0,212,255,0.3);
+  font-weight:600; font-size:0.85rem; text-decoration:none;
+}
+.skip-link:focus { left:0; top:0; }
+
 #scroll-progress {
   position: fixed;
   top: 0; left: 0;
@@ -405,7 +414,7 @@ section { padding:6rem 6%; }
   box-shadow: 0 0 15px rgba(0,212,255,0.4);
 }
 .plan-name { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:2px; color:var(--gray); margin-bottom:0.3rem; }
-.plan-desc { font-size:0.82rem; color:rgba(255,255,255,0.4); margin-bottom:1.5rem; font-weight:300; }
+.plan-desc { font-size:0.82rem; color:var(--gray); margin-bottom:1.5rem; font-weight:300; }
 .plan-price { font-family:'Bebas Neue',sans-serif; font-size:3.5rem; letter-spacing:1px; line-height:1; margin-bottom:0.2rem; }
 .plan-price sup { font-size:1.5rem; vertical-align:top; margin-top:0.6rem; display:inline-block; }
 .plan-price.accent-price { color:var(--cyan); text-shadow:0 0 20px rgba(0,212,255,0.3); }
@@ -426,7 +435,7 @@ section { padding:6rem 6%; }
   color:white; border:none; box-shadow:0 0 25px rgba(0,212,255,0.3);
 }
 .price-card.featured .plan-cta:hover { box-shadow:0 0 40px rgba(0,212,255,0.5); transform:translateY(-1px); }
-.price-note { text-align:center; font-size:0.82rem; color:rgba(255,255,255,0.3); margin-top:2rem; font-weight:300; }
+.price-note { text-align:center; font-size:0.82rem; color:var(--gray); margin-top:2rem; font-weight:300; }
 
 #care { background:var(--navy); }
 .care-grid { max-width:760px; margin:0 auto; }
@@ -475,7 +484,7 @@ section { padding:6rem 6%; }
 .compare-table td:first-child { text-align:left; color:rgba(255,255,255,0.7); }
 .compare-table td.elevate-col { background:rgba(0,212,255,0.04); color:var(--cyan); font-weight:600; border-left:1px solid rgba(0,212,255,0.1); border-right:1px solid rgba(0,212,255,0.1); }
 .compare-yes { color:var(--cyan); font-size:1.1rem; }
-.compare-no { color:rgba(255,255,255,0.2); font-size:1.1rem; }
+.compare-no { color:rgba(255,255,255,0.55); font-size:1.1rem; }
 
 /* ══════════════════════════════
    COST ESTIMATOR
@@ -500,8 +509,8 @@ section { padding:6rem 6%; }
 .slider-row:last-child { margin-bottom: 0; }
 .slider-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
 .slider-label { font-size: 0.88rem; color: rgba(255,255,255,0.75); font-weight: 400; }
-.slider-help { font-size: 0.72rem; color: rgba(255,255,255,0.4); line-height: 1.45; margin-top: 0.5rem; }
-.est-group-sub { font-size: 0.78rem; color: rgba(255,255,255,0.45); line-height: 1.5; margin-top: -0.75rem; margin-bottom: 1.1rem; }
+.slider-help { font-size: 0.72rem; color: var(--gray); line-height: 1.45; margin-top: 0.5rem; }
+.est-group-sub { font-size: 0.78rem; color: rgba(255,255,255,0.6); line-height: 1.5; margin-top: -0.75rem; margin-bottom: 1.1rem; }
 .slider-val {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 1.1rem; color: var(--cyan); letter-spacing: 1px;
@@ -548,7 +557,7 @@ input[type=range].est-range::-moz-range-thumb {
 .ft-text { display: flex; flex-direction: column; gap: 2px; }
 .ft-label { font-size: 0.82rem; color: rgba(255,255,255,0.7); font-weight: 400; line-height: 1.2; }
 .feature-toggle.selected .ft-label { color: var(--white); }
-.ft-desc { font-size: 0.68rem; color: rgba(255,255,255,0.38); font-weight: 300; line-height: 1.35; }
+.ft-desc { font-size: 0.68rem; color: rgba(255,255,255,0.58); font-weight: 300; line-height: 1.35; }
 .feature-toggle.selected .ft-desc { color: rgba(255,255,255,0.55); }
 
 /* Care plan picker — same visual language as feature-toggle, but a
@@ -597,7 +606,7 @@ input[type=range].est-range::-moz-range-thumb {
   color: var(--cyan); text-shadow: 0 0 30px rgba(0,212,255,0.4);
   transition: all 0.4s;
 }
-.est-price-to { font-size: 0.8rem; color: rgba(255,255,255,0.4); margin-top: 0.25rem; }
+.est-price-to { font-size: 0.8rem; color: var(--gray); margin-top: 0.25rem; }
 .est-price-to span { color: rgba(0,212,255,0.7); font-family: 'Bebas Neue', sans-serif; font-size: 1rem; }
 .est-breakdown { display: flex; flex-direction: column; gap: 0.6rem; }
 .est-line { display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; }
@@ -644,6 +653,13 @@ input[type=range].est-range::-moz-range-thumb {
 .contact-icon svg { width:20px; height:20px; stroke:var(--cyan); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 .contact-item-label { font-size:0.75rem; color:var(--gray); text-transform:uppercase; letter-spacing:1.5px; font-weight:500; margin-bottom:0.25rem; }
 .contact-item-val { font-size:1rem; color:var(--white); font-weight:400; }
+.contact-item-val-row { display:flex; align-items:center; gap:0.6rem; }
+.copy-btn {
+  background:transparent; border:1px solid rgba(0,212,255,0.2); border-radius:4px;
+  padding:3px 5px; color:var(--cyan); cursor:pointer; transition:all 0.2s; line-height:0; flex-shrink:0;
+}
+.copy-btn:hover { border-color:var(--cyan); background:rgba(0,212,255,0.08); }
+.copy-btn.copied { color:#4dc464; border-color:#4dc464; }
 .contact-form { display:flex; flex-direction:column; gap:1rem; }
 .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
 .form-group { display:flex; flex-direction:column; gap:0.4rem; }
@@ -679,7 +695,12 @@ input[type=range].est-range::-moz-range-thumb {
 #whatsapp-float {
   position:fixed; bottom:2rem; right:2rem; z-index:500;
   display:flex; flex-direction:column; align-items:flex-end; gap:0.75rem;
+  /* The tooltip above the bubble stays in the layout (just invisible) even
+     when not hovered, so without this the whole tall wrapper box would
+     swallow clicks meant for whatever sits above it (e.g. back-to-top). */
+  pointer-events:none;
 }
+.wa-bubble { pointer-events:auto; }
 .wa-bubble {
   width:58px; height:58px; border-radius:50%;
   background:linear-gradient(135deg, #25d366, #128c7e);
@@ -691,6 +712,18 @@ input[type=range].est-range::-moz-range-thumb {
 }
 .wa-bubble:hover { transform:scale(1.1); box-shadow:0 6px 35px rgba(37,211,102,0.65); }
 .wa-bubble svg { width:28px; height:28px; fill:white; }
+
+.back-to-top {
+  position:fixed; bottom:calc(2rem + 74px); right:2rem; z-index:499;
+  width:48px; height:48px; border-radius:50%; border:none; cursor:pointer;
+  background:linear-gradient(135deg, var(--blue), var(--blue-bright));
+  box-shadow:0 4px 25px rgba(45,142,245,0.4);
+  display:flex; align-items:center; justify-content:center; color:white;
+  opacity:0; visibility:hidden; transform:translateY(10px); pointer-events:none;
+  transition:all 0.3s;
+}
+.back-to-top.show { opacity:1; visibility:visible; transform:translateY(0); pointer-events:auto; }
+.back-to-top:hover { box-shadow:0 6px 35px rgba(45,142,245,0.6); transform:translateY(-2px); }
 .wa-tooltip {
   background: rgba(7,14,26,0.95); backdrop-filter:blur(10px);
   border:1px solid rgba(37,211,102,0.3); color:white;
@@ -1057,6 +1090,7 @@ img, svg, video, iframe, embed, object {
   #whatsapp-float { bottom: 1.25rem; right: 1.25rem; }
   .wa-bubble { width: 50px; height: 50px; }
   .wa-bubble svg { width: 24px; height: 24px; }
+  .back-to-top { bottom: calc(1.25rem + 62px); right: 1.25rem; width: 44px; height: 44px; }
   .wa-tooltip { display: none; }
 
   h1 { font-size: clamp(2.8rem, 14vw, 4rem); }

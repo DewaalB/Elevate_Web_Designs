@@ -9,6 +9,39 @@ window.addEventListener('scroll', () => {
   prog.style.width = pct + '%';
 }, { passive: true });
 
+/* ── BACK TO TOP ── */
+const backToTop = document.getElementById('back-to-top');
+window.addEventListener('scroll', () => {
+  backToTop.classList.toggle('show', window.scrollY > window.innerHeight);
+}, { passive: true });
+backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+/* ── COPY TO CLIPBOARD (phone / email) ── */
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const text = btn.dataset.copy;
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    const originalLabel = btn.getAttribute('aria-label');
+    btn.classList.add('copied');
+    btn.setAttribute('aria-label', 'Copied!');
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.setAttribute('aria-label', originalLabel);
+    }, 1600);
+  });
+});
+
 /* ── CUSTOM CURSOR (desktop only) ── */
 const isMobile = () => window.matchMedia('(max-width: 900px)').matches || ('ontouchstart' in window);
 const cursor   = document.getElementById('cursor');

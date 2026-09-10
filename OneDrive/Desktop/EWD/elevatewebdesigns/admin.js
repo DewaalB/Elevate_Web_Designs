@@ -85,6 +85,16 @@ function resetIdleTimer() {
   }, IDLE_LIMIT_MS);
 }
 
+const pwToggle = document.getElementById('pw-toggle');
+const pwInput  = document.getElementById('login-password');
+pwToggle.addEventListener('click', () => {
+  const show = pwInput.type === 'password';
+  pwInput.type = show ? 'text' : 'password';
+  pwToggle.textContent = show ? '🙈' : '👁';
+  pwToggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  pwToggle.setAttribute('aria-pressed', String(show));
+});
+
 loginForm.addEventListener('submit', async e => {
   e.preventDefault();
   loginError.textContent = '';
