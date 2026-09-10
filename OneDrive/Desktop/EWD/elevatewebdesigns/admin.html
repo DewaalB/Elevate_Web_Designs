@@ -82,6 +82,10 @@
           <div class="stat-num" id="stat-top-package">—</div>
           <div class="stat-label">Top Package</div>
         </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-revenue">R0</div>
+          <div class="stat-label">Revenue Won</div>
+        </div>
       </section>
 
       <!-- ═══ QUOTE CALCULATOR ═══ -->
@@ -172,7 +176,14 @@
           <option value="Won">Won</option>
           <option value="Lost">Lost</option>
         </select>
+        <select id="sort-select" class="status-filter">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="value">Highest value first</option>
+          <option value="name">Name (A-Z)</option>
+        </select>
         <button class="refresh-btn" id="refresh-btn" title="Refresh">⟳</button>
+        <button class="alerts-btn" id="export-btn" title="Download all leads as a CSV file">⬇ Export CSV</button>
       </section>
 
       <section id="leads-list" class="leads-list">

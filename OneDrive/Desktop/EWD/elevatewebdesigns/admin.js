@@ -399,6 +399,39 @@ document.getElementById('q-care').innerHTML = PRICING.CARE_PLANS.map(c =>
   `<option value="${c.id}">${c.id === 'none' ? 'None' : `${c.shortLabel} — ${qFmt(c.price)}/mo`}</option>`
 ).join('');
 
+/* Pre-fills the quote calculator from an estimator-sourced lead's saved
+   message (script.js builds that text in a consistent, parseable shape —
+   see the estCtaBtn handler there). Best-effort: falls back to leaving
+   whatever's already in the calculator if a field isn't found, rather
+   than clobbering it with a wrong guess. */
+function applyEstimatorMessageToQuote(message) {
+  const pages     = message.match(/Pages:\s*(\d+)/);
+  const revisions = message.match(/Rounds of changes:\s*(\d+)/);
+  const urgency   = message.match(/Timeline:\s*(\d+)\s*week/);
+  const features  = message.match(/Extra features:\s*(.+)/);
+  const care      = message.match(/Care plan:\s*([^(\n]+)/);
+
+  if (pages)     document.getElementById('q-pages').value     = pages[1];
+  if (revisions) document.getElementById('q-revisions').value = revisions[1];
+  if (urgency)   document.getElementById('q-urgency').value   = urgency[1];
+
+  if (features && features[1].trim() !== 'None selected') {
+    const wanted = features[1].split(',').map(s => s.trim().toLowerCase());
+    document.querySelectorAll('#q-features input').forEach(cb => {
+      const label = PRICING.FEATURES.find(f => f.id === cb.value)?.label.toLowerCase();
+      const on = wanted.includes(label);
+      cb.checked = on;
+      cb.closest('.quote-feature').classList.toggle('on', on);
+    });
+  }
+
+  if (care) {
+    const wanted = care[1].trim().toLowerCase();
+    const plan = PRICING.CARE_PLANS.find(c => c.shortLabel.toLowerCase() === wanted);
+    if (plan) document.getElementById('q-care').value = plan.id;
+  }
+}
+
 function readQuoteForm() {
   return {
     client:     document.getElementById('q-client').value.trim(),
@@ -547,6 +580,11 @@ function renderStats() {
   });
   const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
   document.getElementById('stat-top-package').textContent = top ? top[0] : '—';
+
+  const revenue = allLeads
+    .filter(l => l.status === 'Won')
+    .reduce((sum, l) => sum + (l.dealValue || 0), 0);
+  document.getElementById('stat-revenue').textContent = qFmt(revenue);
 }
 
 function renderLeads() {
@@ -554,6 +592,7 @@ function renderLeads() {
   const emptyState = document.getElementById('empty-state');
   const search     = document.getElementById('search-input').value.trim().toLowerCase();
   const statusF    = document.getElementById('status-filter').value;
+  const sortBy     = document.getElementById('sort-select').value;
 
   const filtered = allLeads.filter(l => {
     const status = l.status || 'New';
@@ -562,6 +601,14 @@ function renderLeads() {
     const hay = `${l.name || ''} ${l.email || ''} ${l.message || ''}`.toLowerCase();
     return hay.includes(search);
   });
+
+  const bySeconds = l => l.createdAt?.seconds || 0;
+  switch (sortBy) {
+    case 'oldest': filtered.sort((a, b) => bySeconds(a) - bySeconds(b)); break;
+    case 'value':  filtered.sort((a, b) => (b.dealValue || 0) - (a.dealValue || 0)); break;
+    case 'name':   filtered.sort((a, b) => (a.name || '').localeCompare(b.name || '')); break;
+    default:       filtered.sort((a, b) => bySeconds(b) - bySeconds(a)); // newest
+  }
 
   list.querySelectorAll('.lead-card').forEach(el => el.remove());
 
@@ -626,7 +673,10 @@ function buildLeadCard(lead) {
         ${lead.package ? '<div class="lead-package">' + escapeHtml(lead.package) + '</div>' : ''}
         ${(lead.utm_source || lead.utm_medium || lead.utm_campaign) ? '<div class="lead-utm">🔗 ' + escapeHtml(lead.utm_source || '—') + ' · ' + escapeHtml(lead.utm_medium || '—') + ' · ' + escapeHtml(lead.utm_campaign || '—') + '</div>' : ''}
       </div>
-      <div class="lead-date">${date}</div>
+      <div>
+        <div class="lead-date">${date}</div>
+        ${lead.dealValue != null ? `<button type="button" class="lead-value-badge" title="Click to edit deal value">💰 ${qFmt(lead.dealValue)}</button>` : ''}
+      </div>
     </div>
     <div class="lead-message">${escapeHtml(lead.message || '')}</div>
     <div class="lead-controls">
@@ -638,21 +688,64 @@ function buildLeadCard(lead) {
       </select>
       <input type="text" class="lead-notes" placeholder="Private notes..." value="${escapeAttr(lead.notes || '')}">
       <span class="save-hint">Saved ✓</span>
+      <button class="lead-payment-btn">🧮 Quote</button>
       <button class="lead-delete">Delete</button>
     </div>
   `;
 
-  const statusSel = card.querySelector('.lead-status');
+  const statusSel  = card.querySelector('.lead-status');
   const notesInput = card.querySelector('.lead-notes');
   const saveHint   = card.querySelector('.save-hint');
   const deleteBtn  = card.querySelector('.lead-delete');
+  const quoteBtn   = card.querySelector('.lead-payment-btn');
+  const valueBadge = card.querySelector('.lead-value-badge');
 
   statusSel.addEventListener('change', async () => {
-    statusSel.dataset.status = statusSel.value;
-    lead.status = statusSel.value;
-    await updateDoc(doc(db, 'leads', lead.id), { status: statusSel.value });
+    const newStatus = statusSel.value;
+    const updates = { status: newStatus };
+
+    // Moving to Won and no deal value recorded yet — ask for one, so
+    // "Revenue Won" actually means something. Declining just skips it;
+    // the badge/prompt can always be added later via the value badge.
+    if (newStatus === 'Won' && lead.dealValue == null) {
+      const raw = prompt(`Deal value for "${lead.name || 'this lead'}" (Rand, numbers only — leave blank to skip):`);
+      const val = Number(raw);
+      if (raw && !Number.isNaN(val) && val >= 0) updates.dealValue = val;
+    }
+
+    statusSel.dataset.status = newStatus;
+    Object.assign(lead, updates);
+    await updateDoc(doc(db, 'leads', lead.id), updates);
     flashSaved(saveHint);
     renderStats();
+    if ('dealValue' in updates) renderLeads(); // redraw this card with its new value badge
+  });
+
+  if (valueBadge) {
+    valueBadge.addEventListener('click', async () => {
+      const raw = prompt(`Update deal value for "${lead.name || 'this lead'}" (Rand):`, String(lead.dealValue));
+      if (raw === null) return;
+      const val = Number(raw);
+      if (Number.isNaN(val) || val < 0) { alert('Please enter a valid amount.'); return; }
+      lead.dealValue = val;
+      await updateDoc(doc(db, 'leads', lead.id), { dealValue: val });
+      flashSaved(saveHint);
+      renderStats();
+      renderLeads();
+    });
+  }
+
+  quoteBtn.addEventListener('click', () => {
+    quoteBody.hidden = false;
+    quoteChevron.classList.add('open');
+    quoteToggle.setAttribute('aria-expanded', 'true');
+
+    document.getElementById('q-client').value = lead.name || '';
+    document.getElementById('q-phone').value  = lead.phone || '';
+    if (lead.source === 'website_estimator') applyEstimatorMessageToQuote(lead.message || '');
+    updateQuote();
+
+    quoteToggle.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   let notesTimer;
@@ -704,4 +797,39 @@ function escapeAttr(str) {
 
 document.getElementById('search-input').addEventListener('input', renderLeads);
 document.getElementById('status-filter').addEventListener('change', renderLeads);
+document.getElementById('sort-select').addEventListener('change', renderLeads);
 document.getElementById('refresh-btn').addEventListener('click', loadLeads);
+
+/* ── EXPORT TO CSV ──
+   Always exports every lead, regardless of the current search/filter/sort
+   — this button is a full backup, not "export what's on screen." */
+function csvField(val) {
+  const s = String(val ?? '');
+  return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+document.getElementById('export-btn').addEventListener('click', () => {
+  const columns = [
+    'Name', 'Email', 'Phone', 'Package', 'Status', 'Deal Value (ZAR)',
+    'Source', 'UTM Source', 'UTM Medium', 'UTM Campaign',
+    'Message', 'Notes', 'Created At',
+  ];
+  const rows = allLeads.map(l => [
+    l.name || '', l.email || '', l.phone || '', l.package || '', l.status || 'New',
+    l.dealValue != null ? l.dealValue : '',
+    l.source || '', l.utm_source || '', l.utm_medium || '', l.utm_campaign || '',
+    l.message || '', l.notes || '',
+    l.createdAt?.seconds ? new Date(l.createdAt.seconds * 1000).toLocaleString('en-ZA') : '',
+  ]);
+
+  const csv = [columns, ...rows].map(row => row.map(csvField).join(',')).join('\r\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `elevate-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});

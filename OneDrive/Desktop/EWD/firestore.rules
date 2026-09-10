@@ -33,13 +33,14 @@ service cloud.firestore {
       allow read, list: if isAdmin();
       allow delete: if isAdmin();
 
-      // Even the admin dashboard may only ever change status/notes —
+      // Even the admin dashboard may only ever change status/notes/dealValue —
       // the original submitted fields (name, email, message, etc.)
       // stay immutable so nobody can quietly rewrite what a lead said.
       allow update: if isAdmin() &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'notes']) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'notes', 'dealValue']) &&
         (!('status' in request.resource.data) || request.resource.data.status in ['New', 'Contacted', 'Won', 'Lost']) &&
-        (!('notes' in request.resource.data) || (request.resource.data.notes is string && request.resource.data.notes.size() < 2000));
+        (!('notes' in request.resource.data) || (request.resource.data.notes is string && request.resource.data.notes.size() < 2000)) &&
+        (!('dealValue' in request.resource.data) || (request.resource.data.dealValue is number && request.resource.data.dealValue >= 0 && request.resource.data.dealValue < 1000000));
     }
 
     // Deny everything else by default.
