@@ -513,6 +513,11 @@ document.getElementById('q-whatsapp').addEventListener('click', () => {
   window.open(`${base}?text=${encodeURIComponent(text)}`, '_blank');
 });
 
+document.getElementById('q-print').addEventListener('click', () => {
+  document.getElementById('print-quote-output').textContent = document.getElementById('q-text').value;
+  window.print();
+});
+
 /* 082 536 8312 / +27 82 536 8312 / 2782... all become 2782... */
 function toWhatsAppNumber(raw) {
   const digits = String(raw || '').replace(/\D/g, '');
@@ -571,6 +576,33 @@ function renderLeads() {
 
   filtered.forEach(lead => list.appendChild(buildLeadCard(lead)));
 }
+
+/* ── CONFIRMATION MODAL (replaces native confirm()) ──
+   Reusable for any future destructive action, not just lead deletion. */
+const confirmOverlay    = document.getElementById('confirm-overlay');
+const confirmMessage    = document.getElementById('confirm-message');
+const confirmOkBtn      = document.getElementById('confirm-ok-btn');
+const confirmCancelBtn  = document.getElementById('confirm-cancel-btn');
+let confirmResolve = null;
+
+function showConfirm(message) {
+  return new Promise(resolve => {
+    confirmResolve = resolve;
+    confirmMessage.textContent = message;
+    confirmOverlay.classList.add('open');
+    confirmOkBtn.focus();
+  });
+}
+function closeConfirm(result) {
+  confirmOverlay.classList.remove('open');
+  if (confirmResolve) { confirmResolve(result); confirmResolve = null; }
+}
+confirmOkBtn.addEventListener('click', () => closeConfirm(true));
+confirmCancelBtn.addEventListener('click', () => closeConfirm(false));
+confirmOverlay.addEventListener('click', e => { if (e.target === confirmOverlay) closeConfirm(false); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && confirmOverlay.classList.contains('open')) closeConfirm(false);
+});
 
 function buildLeadCard(lead) {
   const card = document.createElement('div');
@@ -633,7 +665,8 @@ function buildLeadCard(lead) {
   });
 
   deleteBtn.addEventListener('click', async () => {
-    if (!confirm(`Delete the lead from "${lead.name || 'this contact'}"? This can't be undone.`)) return;
+    const ok = await showConfirm(`Delete the lead from "${lead.name || 'this contact'}"? This can't be undone.`);
+    if (!ok) return;
     await deleteDoc(doc(db, 'leads', lead.id));
     allLeads = allLeads.filter(l => l.id !== lead.id);
     renderStats();

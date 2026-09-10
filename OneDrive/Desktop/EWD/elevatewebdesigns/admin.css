@@ -323,3 +323,30 @@ body {
   .dash-main { padding: 1.5rem 6% 3rem; }
   .lead-top { flex-direction: column; }
 }
+
+/* ── CONFIRMATION MODAL (replaces native confirm()) ── */
+.confirm-overlay {
+  display: none; position: fixed; inset: 0; z-index: 300;
+  background: rgba(5,10,20,0.85); backdrop-filter: blur(6px);
+  align-items: center; justify-content: center; padding: 5vh 5%;
+}
+.confirm-overlay.open { display: flex; }
+.confirm-modal {
+  background: var(--navy-mid); border: 1px solid rgba(0,212,255,0.15);
+  border-radius: 16px; padding: 2rem; max-width: 380px; width: 100%;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+}
+.confirm-message { font-size: 0.92rem; color: rgba(255,255,255,0.85); line-height: 1.6; margin-bottom: 1.5rem; }
+.confirm-actions { display: flex; gap: 0.75rem; }
+.confirm-actions .quote-btn { flex: 1; }
+.confirm-danger { background: linear-gradient(135deg,#c0392b,#e74c3c) !important; border: none !important; color: white !important; }
+
+/* ── PRINT (quote calculator only) ── */
+@media print {
+  body > * { display: none !important; }
+  #print-quote-output {
+    display: block !important; position: static; white-space: pre-wrap;
+    color: #000; background: #fff; font-family: 'Consolas', 'Menlo', monospace;
+    padding: 2rem; font-size: 0.85rem;
+  }
+}

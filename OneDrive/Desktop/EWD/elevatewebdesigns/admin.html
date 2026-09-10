@@ -153,6 +153,7 @@
               <div class="quote-actions">
                 <button class="quote-btn primary" id="q-copy">Copy Quote</button>
                 <button class="quote-btn" id="q-whatsapp">Send on WhatsApp</button>
+                <button class="quote-btn" id="q-print">Print Quote</button>
               </div>
             </div>
 
@@ -184,6 +185,18 @@
     <div class="lead-toast-body">
       <strong id="lead-toast-title">New lead!</strong>
       <span id="lead-toast-msg"></span>
+    </div>
+  </div>
+
+  <pre id="print-quote-output" style="display:none;"></pre>
+
+  <div class="confirm-overlay" id="confirm-overlay">
+    <div class="confirm-modal">
+      <p class="confirm-message" id="confirm-message"></p>
+      <div class="confirm-actions">
+        <button type="button" class="quote-btn" id="confirm-cancel-btn">Cancel</button>
+        <button type="button" class="quote-btn primary confirm-danger" id="confirm-ok-btn">Delete</button>
+      </div>
     </div>
   </div>
 

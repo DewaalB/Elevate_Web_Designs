@@ -89,6 +89,7 @@
     <a href="#process" class="mm-link">Process</a>
     <a href="#pricing" class="mm-link">Pricing</a>
     <a href="#estimator" class="mm-link">Estimator</a>
+    <a href="#faq" class="mm-link">FAQ</a>
     <a href="#about" class="mm-link">About</a>
     <a href="#contact" class="mm-link">Contact</a>
   </div>
@@ -380,6 +381,81 @@
   </section>
 
   <!-- ═══════════════════════════════════════
+       FAQ
+  ═══════════════════════════════════════ -->
+  <section id="faq">
+    <span class="section-label reveal">Common Questions</span>
+    <h2 class="section-title reveal">GOT <span class="accent">QUESTIONS?</span></h2>
+    <p class="section-sub reveal">The things people usually ask before getting started.</p>
+    <div class="faq-list reveal">
+
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-a1" id="faq-q1">
+          <span>How much does a website cost?</span><span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer" id="faq-a1" role="region" aria-labelledby="faq-q1">
+          <p>Packages start at R3,500 for a simple 1–3 page site (see Pricing above), or use the live estimator to get an instant range based on exactly what you need — pages, features, timeline and all. First-time clients get R500 off.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-a2" id="faq-q2">
+          <span>How long does it take to build my site?</span><span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer" id="faq-a2" role="region" aria-labelledby="faq-q2">
+          <p>Simple sites can go live in as little as 48 hours. Most projects take 1–4 weeks depending on scope and how quickly I get your content and feedback. Need it sooner? Pick a shorter timeline in the estimator — a small rush fee may apply.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-a3" id="faq-q3">
+          <span>How many rounds of changes are included?</span><span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer" id="faq-a3" role="region" aria-labelledby="faq-q3">
+          <p>Every project includes 2 rounds of revisions as standard (more on the Professional and Premium packages). Need extra rounds beyond that? They're billed per round — the estimator shows you the exact cost if you add more.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-a4" id="faq-q4">
+          <span>Do I need to pay for hosting separately?</span><span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer" id="faq-a4" role="region" aria-labelledby="faq-q4">
+          <p>Hosting isn't required, but it is recommended — the optional monthly Care Plans (R299 or R499/month) keep your site hosted, secure, backed up and looked after. You can also host elsewhere if you already have a setup you prefer.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-a5" id="faq-q5">
+          <span>Do you help with a domain name?</span><span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer" id="faq-a5" role="region" aria-labelledby="faq-q5">
+          <p>Yes — if you already own a domain (e.g. yourbusiness.co.za), I'll connect it for you. If you don't have one yet, I'll guide you through buying and setting one up.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-a6" id="faq-q6">
+          <span>What happens after my site goes live?</span><span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer" id="faq-a6" role="region" aria-labelledby="faq-q6">
+          <p>I don't disappear after launch. Every package includes a period of support, and the optional Care Plans keep things running smoothly long-term — security updates, backups, and small content changes handled for you.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-a7" id="faq-q7">
+          <span>How do I pay?</span><span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer" id="faq-a7" role="region" aria-labelledby="faq-q7">
+          <p>By EFT — a deposit to get started, with the balance due before your site goes live. Banking details are sent directly once we've agreed on a quote. I don't currently take payment through the site itself.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
        LIVE COST ESTIMATOR
   ═══════════════════════════════════════ -->
   <section id="estimator">
@@ -398,7 +474,7 @@
           </div>
           <div class="slider-row">
             <div class="slider-label-row">
-              <span class="slider-label">How many pages do you need?</span>
+              <label class="slider-label" for="sl-pages">How many pages do you need?</label>
               <span class="slider-val" id="val-pages">3</span>
             </div>
             <input type="range" class="est-range" id="sl-pages" min="1" max="12" value="3" step="1">
@@ -406,7 +482,7 @@
           </div>
           <div class="slider-row">
             <div class="slider-label-row">
-              <span class="slider-label">How many rounds of changes?</span>
+              <label class="slider-label" for="sl-revisions">How many rounds of changes?</label>
               <span class="slider-val" id="val-revisions">2</span>
             </div>
             <input type="range" class="est-range" id="sl-revisions" min="1" max="10" value="2" step="1">
@@ -414,7 +490,7 @@
           </div>
           <div class="slider-row" style="margin-bottom:0;">
             <div class="slider-label-row">
-              <span class="slider-label">How soon do you need it live?</span>
+              <label class="slider-label" for="sl-urgency">How soon do you need it live?</label>
               <span class="slider-val" id="val-urgency">2</span>
             </div>
             <input type="range" class="est-range" id="sl-urgency" min="1" max="8" value="2" step="1">
@@ -490,6 +566,7 @@
             <input type="tel" id="est-phone" placeholder="082 000 0000">
           </div>
         </div>
+        <p class="consent-notice">By submitting, you agree to my <button type="button" class="inline-link privacy-trigger">Privacy Policy</button>.</p>
         <button class="est-cta" id="est-cta-btn">
           Send Me This Quote
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -656,6 +733,7 @@
             </p>
           </div>
           <div class="form-group"><label for="message">Tell Me About Your Business</label><textarea id="message" placeholder="What does your business do? What are your goals for your website?"></textarea></div>
+          <p class="consent-notice">By submitting, you agree to my <button type="button" class="inline-link privacy-trigger">Privacy Policy</button>.</p>
           <button class="submit-btn" id="submit-btn">
             Send Message
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -679,6 +757,7 @@
         <a href="#portfolio">Work</a>
         <a href="#pricing">Pricing</a>
         <a href="#estimator">Estimator</a>
+        <a href="#faq">FAQ</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
       </div>
@@ -694,6 +773,8 @@
       <div class="footer-copy">© 2026 Elevate Web Design · South Africa · All rights reserved</div>
       <div class="footer-legal">
         <button type="button" class="footer-legal-link" id="privacy-link">Privacy Policy</button>
+        <span>·</span>
+        <button type="button" class="footer-legal-link" id="terms-link">Terms &amp; Conditions</button>
         <span>·</span>
         <span>Committed to protecting your information under POPIA</span>
       </div>
@@ -723,6 +804,42 @@
 
       <h4>Questions</h4>
       <p>If you have any questions about this policy or how your data is handled, contact me directly on <a href="mailto:elevatewebdesigns26@gmail.com">elevatewebdesigns26@gmail.com</a> or <a href="https://wa.me/27825368312" target="_blank" rel="noopener">WhatsApp</a>.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       TERMS & CONDITIONS MODAL
+  ═══════════════════════════════════════ -->
+  <div class="privacy-overlay" id="terms-overlay">
+    <div class="privacy-modal">
+      <button class="privacy-close" id="terms-close" aria-label="Close">✕</button>
+      <h3>Terms &amp; Conditions</h3>
+      <p class="privacy-updated">Draft — pending owner review. Not yet final.</p>
+
+      <h4>1. Scope of Work</h4>
+      <p>Each project is scoped and quoted individually, based on the pages, features and timeline agreed with you (see the Pricing and Estimator sections above). Any work beyond what was quoted — extra pages, extra features, or a materially different brief — is treated as a change in scope and quoted separately.</p>
+
+      <h4>2. Payment Terms</h4>
+      <p>A deposit is required to begin work, with the balance due on completion before the finished site is handed over or made live. Payment is by EFT — banking details are sent directly once a quote is agreed. No online payment is currently accepted through this site.</p>
+
+      <h4>3. Revisions</h4>
+      <p>Every package includes 2 free rounds of revisions as standard (more on the Professional and Premium packages — see Pricing). Additional rounds beyond what's included are billed per round, at the same rate shown in the live estimator.</p>
+
+      <h4>4. Timeline</h4>
+      <p>Timelines are estimates based on the scope agreed and how quickly feedback and content are provided. Delays in receiving content or feedback from you may extend the delivery date accordingly.</p>
+
+      <h4>5. Ownership &amp; Intellectual Property</h4>
+      <p>Full ownership of the completed website transfers to you on receipt of full payment. Until then, the work remains the property of Elevate Web Design.</p>
+
+      <h4>6. Liability</h4>
+      <p>Liability for any claim relating to a project is limited to the fees paid for that project.</p>
+
+      <h4>7. Unresponsive Clients</h4>
+      <p>If a client does not respond to a request for feedback or content for 30 days, the project may be paused, and any deposit paid may be forfeited.</p>
+
+      <h4>8. Refunds &amp; Cancellations</h4>
+      <p><strong>Once-off projects:</strong> the deposit is non-refundable once design work has begun. A full refund applies only if the project is cancelled before any work has started.</p>
+      <p><strong>Monthly care plans:</strong> billed monthly, cancel anytime (see Hosting &amp; Care Plans above) — no cancellation fee, and no refund for time already paid in the current billing period.</p>
     </div>
   </div>
 

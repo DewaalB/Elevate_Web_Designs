@@ -84,13 +84,17 @@ document.querySelectorAll('.mm-link').forEach(l => {
   l.addEventListener('click', () => mobileMenu.classList.remove('open'));
 });
 
-/* ── PRIVACY POLICY MODAL ── */
-const privacyLink    = document.getElementById('privacy-link');
+/* ── PRIVACY POLICY MODAL ──
+   Opened from the footer link and from the consent-notice links above
+   the contact form / estimator ("By submitting, you agree to my Privacy
+   Policy"), so any element with .privacy-trigger opens it too. */
 const privacyOverlay = document.getElementById('privacy-overlay');
 const privacyClose   = document.getElementById('privacy-close');
 
-if (privacyLink && privacyOverlay && privacyClose) {
-  privacyLink.addEventListener('click', () => privacyOverlay.classList.add('open'));
+if (privacyOverlay && privacyClose) {
+  document.querySelectorAll('#privacy-link, .privacy-trigger').forEach(el => {
+    el.addEventListener('click', () => privacyOverlay.classList.add('open'));
+  });
   privacyClose.addEventListener('click', () => privacyOverlay.classList.remove('open'));
   privacyOverlay.addEventListener('click', e => {
     if (e.target === privacyOverlay) privacyOverlay.classList.remove('open');
@@ -99,6 +103,32 @@ if (privacyLink && privacyOverlay && privacyClose) {
     if (e.key === 'Escape') privacyOverlay.classList.remove('open');
   });
 }
+
+/* ── TERMS & CONDITIONS MODAL (same pattern as Privacy Policy) ── */
+const termsLink    = document.getElementById('terms-link');
+const termsOverlay = document.getElementById('terms-overlay');
+const termsClose   = document.getElementById('terms-close');
+
+if (termsLink && termsOverlay && termsClose) {
+  termsLink.addEventListener('click', () => termsOverlay.classList.add('open'));
+  termsClose.addEventListener('click', () => termsOverlay.classList.remove('open'));
+  termsOverlay.addEventListener('click', e => {
+    if (e.target === termsOverlay) termsOverlay.classList.remove('open');
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') termsOverlay.classList.remove('open');
+  });
+}
+
+/* ── FAQ ACCORDION ── */
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const open = !item.classList.contains('open');
+    item.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', String(open));
+  });
+});
 
 /* ── SMOOTH SCROLL ── */
 document.querySelectorAll('a[href^="#"]').forEach(a => {
@@ -301,17 +331,19 @@ function renderEstimatorOptions() {
   const check = '<div class="ft-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,7 9,1"/></svg></div>';
 
   document.getElementById('feature-grid').innerHTML = PRICING.FEATURES.map(f => `
-    <div class="feature-toggle" data-id="${f.id}">
+    <label class="feature-toggle" for="ft-${f.id}">
+      <input type="checkbox" id="ft-${f.id}" class="ft-input" value="${f.id}">
       ${check}
       <div class="ft-text"><span class="ft-label">${f.label}</span><span class="ft-desc">${f.desc}</span></div>
-    </div>
+    </label>
   `).join('');
 
   document.getElementById('care-grid').innerHTML = PRICING.CARE_PLANS.map((c, i) => `
-    <div class="care-toggle${i === 0 ? ' selected' : ''}" data-id="${c.id}">
+    <label class="care-toggle${i === 0 ? ' selected' : ''}" for="ct-${c.id}">
+      <input type="radio" name="care-plan" id="ct-${c.id}" class="ct-input" value="${c.id}"${i === 0 ? ' checked' : ''}>
       ${check}
       <div class="ft-text"><span class="ft-label">${c.id === 'none' ? c.shortLabel : c.label}</span><span class="ft-desc">${c.desc}</span></div>
-    </div>
+    </label>
   `).join('');
 }
 renderEstimatorOptions();
@@ -341,9 +373,9 @@ function calcEstimate() {
   const revisions = +document.getElementById('sl-revisions').value;
   const urgency   = +document.getElementById('sl-urgency').value;
 
-  const featureIds = [...document.querySelectorAll('.feature-toggle.selected')].map(ft => ft.dataset.id);
-  const careEl     = document.querySelector('.care-toggle.selected');
-  const carePlanId = careEl ? careEl.dataset.id : 'none';
+  const featureIds = [...document.querySelectorAll('.ft-input:checked')].map(i => i.value);
+  const careEl     = document.querySelector('.ct-input:checked');
+  const carePlanId = careEl ? careEl.value : 'none';
 
   const q = PRICING.calculate({ pages, revisions, urgency, featureIds, carePlanId });
 
@@ -382,14 +414,17 @@ function calcEstimate() {
   document.getElementById(id).addEventListener('input', calcEstimate);
 });
 
-document.querySelectorAll('.feature-toggle').forEach(ft => {
-  ft.addEventListener('click', () => { ft.classList.toggle('selected'); calcEstimate(); });
+document.querySelectorAll('.ft-input').forEach(input => {
+  input.addEventListener('change', () => {
+    input.closest('.feature-toggle').classList.toggle('selected', input.checked);
+    calcEstimate();
+  });
 });
 
-document.querySelectorAll('.care-toggle').forEach(ct => {
-  ct.addEventListener('click', () => {
+document.querySelectorAll('.ct-input').forEach(input => {
+  input.addEventListener('change', () => {
     document.querySelectorAll('.care-toggle').forEach(o => o.classList.remove('selected'));
-    ct.classList.add('selected');
+    input.closest('.care-toggle').classList.add('selected');
     calcEstimate();
   });
 });
@@ -404,6 +439,8 @@ estCtaBtn.addEventListener('click', () => {
   const name    = nameEl.value.trim();
   const phone   = phoneEl.value.trim();
 
+  nameEl.classList.toggle('field-error', !name);
+  phoneEl.classList.toggle('field-error', !phone);
   if (!name || !phone) {
     showToast('Missing details', 'Please add your name and WhatsApp number so I can send your quote.', true);
     return;
@@ -462,6 +499,12 @@ function showToast(title, msg, isError = false) {
   setTimeout(() => toast.classList.remove('show'), 4500);
 }
 
+/* Clear a field's red-border error state the moment the visitor starts fixing it. */
+['name', 'email', 'message', 'est-name', 'est-phone'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => el.classList.remove('field-error'));
+});
+
 /* ── CONTACT FORM ── */
 const submitBtn = document.getElementById('submit-btn');
 if (submitBtn) {
@@ -472,6 +515,9 @@ if (submitBtn) {
     const pkg   = document.getElementById('package')?.value;
     const msg   = document.getElementById('message')?.value.trim();
 
+    document.getElementById('name').classList.toggle('field-error', !name);
+    document.getElementById('email').classList.toggle('field-error', !email);
+    document.getElementById('message').classList.toggle('field-error', !msg);
     if (!name || !email || !msg) {
       showToast('Missing fields', 'Please fill in your name, email and message.', true);
       return;
