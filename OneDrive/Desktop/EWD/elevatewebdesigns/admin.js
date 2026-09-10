@@ -645,7 +645,17 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 function escapeAttr(str) {
-  return String(str).replace(/"/g, '&quot;');
+  // Full attribute-value encoding, not just quotes — a lead's name/email/
+  // phone/notes are visitor-supplied and only checked for type/length by
+  // Firestore rules, never for content, so this is a real XSS boundary,
+  // not a formality. & must be encoded first so the later replacements
+  // don't get double-escaped.
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 document.getElementById('search-input').addEventListener('input', renderLeads);
