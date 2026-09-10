@@ -74,10 +74,10 @@
     <ul class="nav-links">
       <li><a href="#services">Services</a></li>
       <li><a href="#portfolio">Work</a></li>
+      <li><a href="#about">About</a></li>
       <li><a href="#process">Process</a></li>
       <li><a href="#pricing">Pricing</a></li>
       <li><a href="#estimator">Estimator</a></li>
-      <li><a href="#about">About</a></li>
       <li><a href="#contact" class="nav-cta">Get a Quote</a></li>
     </ul>
     <button class="hamburger" id="hamburger" aria-label="Open menu">
@@ -89,11 +89,11 @@
     <button class="close-menu" id="close-menu" aria-label="Close menu">✕</button>
     <a href="#services" class="mm-link">Services</a>
     <a href="#portfolio" class="mm-link">Work</a>
+    <a href="#about" class="mm-link">About</a>
     <a href="#process" class="mm-link">Process</a>
     <a href="#pricing" class="mm-link">Pricing</a>
     <a href="#estimator" class="mm-link">Estimator</a>
     <a href="#faq" class="mm-link">FAQ</a>
-    <a href="#about" class="mm-link">About</a>
     <a href="#contact" class="mm-link">Contact</a>
   </div>
 
@@ -244,7 +244,41 @@
     </div>
   </section>
 
-
+  <section id="about">
+    <div class="about-grid">
+      <div class="about-visual reveal">
+        <div class="about-card about-main-card">
+          <div class="line-block blue" style="width:80%;"></div>
+          <div class="line-block" style="width:100%;"></div>
+          <div class="line-block" style="width:65%;"></div>
+          <div class="line-block blue short"></div>
+          <div class="line-block" style="width:90%;"></div>
+          <div class="about-live-row">
+            <div class="live-badge">LIVE SITE</div>
+            <div class="live-square"></div>
+          </div>
+        </div>
+        <div class="about-float-card">
+          <div class="float-line full"></div>
+          <div class="float-line short70"></div>
+          <div class="float-line short85"></div>
+        </div>
+      </div>
+      <div class="about-text">
+        <span class="section-label reveal">About</span>
+        <h2 class="section-title reveal">YOUR DIGITAL <span class="accent">PARTNER.</span></h2>
+        <p class="lead reveal">I'm a South African web designer passionate about helping small businesses build a powerful online presence — without spending a fortune.</p>
+        <p class="body-text reveal">Every business deserves a website that works as hard as they do. I combine modern design, technical performance, and a deep understanding of the South African market to deliver websites that don't just look good — they deliver real results.</p>
+        <ul class="value-list reveal">
+          <li><div class="v-dot"></div>Affordable, transparent pricing</li>
+          <li><div class="v-dot"></div>Personal service — you deal with me directly</li>
+          <li><div class="v-dot"></div>Fast turnaround, no agency delays</li>
+          <li><div class="v-dot"></div>Built for South African businesses</li>
+        </ul>
+        <a href="#contact" class="btn-primary reveal">Work With Me <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </section>
 
   <section id="process">
     <span class="section-label reveal">How It Works</span>
@@ -313,13 +347,11 @@
     </div>
     <p class="price-note reveal">All prices in ZAR · Custom quotes available · First-time clients get R500 off · Let's chat</p>
     <p class="price-note reveal" style="margin-top:0.6rem;">Need something custom? Contact us for a personalised quote.</p>
-  </section>
 
-  <section id="care">
-    <span class="section-label reveal">Keep It Running</span>
-    <h2 class="section-title reveal">HOSTING &amp; <span class="accent">CARE PLANS.</span></h2>
-    <p class="section-sub reveal">Your website launch is just the start. Let me keep it fast, secure and up to date every month.</p>
-    <div class="pricing-grid care-grid">
+    <div class="pricing-subsection reveal">
+      <h3 class="subsection-title">Ongoing Care Plans <span class="subsection-tag">optional add-on</span></h3>
+      <p class="subsection-sub">Your website launch is just the start — keep it fast, secure and up to date every month.</p>
+      <div class="pricing-grid care-grid">
       <div class="price-card reveal">
         <div class="plan-name">Website Care</div>
         <div class="plan-desc">Keeps your site online, secure and backed up</div>
@@ -351,16 +383,15 @@
         </ul>
         <a href="#contact" class="plan-cta">Add This Plan</a>
       </div>
+      </div>
+      <p class="price-note reveal">Care plans are optional and billed monthly · Cancel anytime · Available for any package</p>
     </div>
-    <p class="price-note reveal">Care plans are optional and billed monthly · Cancel anytime · Available for any package</p>
-  </section>
 
-  <section id="compare">
-    <span class="section-label reveal">Why Choose Me</span>
-    <h2 class="section-title reveal">ELEVATE VS <span class="accent">THE REST.</span></h2>
-    <p class="section-sub reveal">See how working with me directly compares to a big agency or a DIY website builder.</p>
-    <div class="reveal" style="overflow-x:auto;">
-      <table class="compare-table">
+    <div class="pricing-subsection reveal">
+      <h3 class="subsection-title">Elevate vs <span class="accent">The Rest</span></h3>
+      <p class="subsection-sub">See how working with me directly compares to a big agency or a DIY website builder.</p>
+      <div class="compare-table-wrap">
+        <table class="compare-table">
         <thead>
           <tr>
             <th style="text-align:left;">Feature</th>
@@ -380,6 +411,8 @@
           <tr><td>Understands SA Market</td><td class="elevate-col"><span class="compare-yes">✓</span></td><td>Sometimes</td><td><span class="compare-no">✗</span></td></tr>
         </tbody>
       </table>
+      </div>
+      <p class="swipe-hint">← swipe to see more →</p>
     </div>
   </section>
 
@@ -578,48 +611,6 @@
 
     </div>
   </section>
-
-  <section id="about">
-    <div class="about-grid">
-      <div class="about-visual reveal">
-        <div class="about-card about-main-card">
-          <div class="line-block blue" style="width:80%;"></div>
-          <div class="line-block" style="width:100%;"></div>
-          <div class="line-block" style="width:65%;"></div>
-          <div class="line-block blue short"></div>
-          <div class="line-block" style="width:90%;"></div>
-          <div class="about-live-row">
-            <div class="live-badge">LIVE SITE</div>
-            <div class="live-square"></div>
-          </div>
-        </div>
-        <div class="about-float-card">
-          <div class="float-line full"></div>
-          <div class="float-line short70"></div>
-          <div class="float-line short85"></div>
-        </div>
-      </div>
-      <div class="about-text">
-        <span class="section-label reveal">About</span>
-        <h2 class="section-title reveal">YOUR DIGITAL <span class="accent">PARTNER.</span></h2>
-        <p class="lead reveal">I'm a South African web designer passionate about helping small businesses build a powerful online presence — without spending a fortune.</p>
-        <p class="body-text reveal">Every business deserves a website that works as hard as they do. I combine modern design, technical performance, and a deep understanding of the South African market to deliver websites that don't just look good — they deliver real results.</p>
-        <ul class="value-list reveal">
-          <li><div class="v-dot"></div>Affordable, transparent pricing</li>
-          <li><div class="v-dot"></div>Personal service — you deal with me directly</li>
-          <li><div class="v-dot"></div>Fast turnaround, no agency delays</li>
-          <li><div class="v-dot"></div>Built for South African businesses</li>
-        </ul>
-        <a href="#contact" class="btn-primary reveal">Work With Me <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-      </div>
-    </div>
-  </section>
-
-  <div class="divider-down">
-    <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <polygon points="0,0 1440,0 1440,48 0,0" fill="#070e1a"/>
-    </svg>
-  </div>
 
   <section id="skills">
     <span class="section-label reveal">My Toolkit</span>
