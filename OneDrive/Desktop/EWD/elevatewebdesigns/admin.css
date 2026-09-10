@@ -13,6 +13,13 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* The `hidden` attribute must always win, no matter what `display` a
+   more specific rule sets elsewhere (e.g. .auth-wrap's `display:flex`
+   below) — without this, toggling `.hidden = true` in JS doesn't
+   actually hide the element, since the two rules tie on specificity
+   and the later one (the class rule) wins the cascade instead. */
+[hidden] { display: none !important; }
+
 body {
   font-family: 'Outfit', sans-serif;
   background: var(--navy);
