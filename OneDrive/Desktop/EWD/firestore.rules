@@ -14,7 +14,7 @@ service cloud.firestore {
     // (status/notes) and deleting is restricted to the admin dashboard.
     match /leads/{leadId} {
       allow create: if
-        request.resource.data.keys().hasOnly(['name', 'phone', 'email', 'package', 'message', 'source', 'createdAt']) &&
+        request.resource.data.keys().hasOnly(['name', 'phone', 'email', 'package', 'message', 'source', 'createdAt', 'utm_source', 'utm_medium', 'utm_campaign']) &&
         request.resource.data.name is string &&
         request.resource.data.name.size() > 0 && request.resource.data.name.size() < 200 &&
         request.resource.data.email is string &&
@@ -24,7 +24,11 @@ service cloud.firestore {
         request.resource.data.phone is string && request.resource.data.phone.size() < 50 &&
         request.resource.data.package is string && request.resource.data.package.size() < 100 &&
         request.resource.data.source in ['website_contact_form', 'website_estimator'] &&
-        request.resource.data.createdAt == request.time;
+        request.resource.data.createdAt == request.time &&
+        // UTM campaign-attribution tags: optional, small, bounded strings.
+        (!('utm_source' in request.resource.data)   || (request.resource.data.utm_source   is string && request.resource.data.utm_source.size()   < 100)) &&
+        (!('utm_medium' in request.resource.data)   || (request.resource.data.utm_medium   is string && request.resource.data.utm_medium.size()   < 100)) &&
+        (!('utm_campaign' in request.resource.data) || (request.resource.data.utm_campaign is string && request.resource.data.utm_campaign.size() < 100));
 
       allow read, list: if isAdmin();
       allow delete: if isAdmin();

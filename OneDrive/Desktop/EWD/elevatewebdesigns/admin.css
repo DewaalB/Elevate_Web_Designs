@@ -191,6 +191,7 @@ body {
   display: inline-block; margin-top: 0.4rem; font-size: 0.72rem; padding: 0.2rem 0.6rem;
   border-radius: 100px; border: 1px solid rgba(0,212,255,0.25); color: var(--cyan);
 }
+.lead-utm { font-size: 0.72rem; color: var(--gray); margin-top: 0.35rem; }
 .lead-message {
   font-size: 0.86rem; color: rgba(255,255,255,0.75); line-height: 1.6;
   margin: 0.8rem 0; padding: 0.8rem; background: var(--navy); border-radius: 8px;

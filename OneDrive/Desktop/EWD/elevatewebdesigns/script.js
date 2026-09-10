@@ -2,6 +2,21 @@
    ELEVATE WEB DESIGN — script.js (mobile-fixed)
    ========================================= */
 
+/* ── UTM TRACKING ──
+   Captured once from the URL a visitor actually arrived on, so a lead
+   can be traced back to the ad/post/link that brought them — attached
+   to both Firestore writes below. Always sent (possibly empty), never
+   trusted as anything more than a label: it's attacker-reachable, so
+   admin.js must escape it before rendering. */
+const utmParams = (() => {
+  const p = new URLSearchParams(window.location.search);
+  return {
+    utm_source:   (p.get('utm_source')   || '').slice(0, 99),
+    utm_medium:   (p.get('utm_medium')   || '').slice(0, 99),
+    utm_campaign: (p.get('utm_campaign') || '').slice(0, 99),
+  };
+})();
+
 /* ── SCROLL PROGRESS ── */
 const prog = document.getElementById('scroll-progress');
 window.addEventListener('scroll', () => {
@@ -476,7 +491,8 @@ estCtaBtn.addEventListener('click', () => {
       package:   'Custom Estimate',
       message:   summary,
       source:    'website_estimator',
-      createdAt: window.__ts()
+      createdAt: window.__ts(),
+      ...utmParams
     }).catch(err => console.error('Could not save estimator quote to dashboard:', err));
   }
 
@@ -545,7 +561,8 @@ if (submitBtn) {
         package:   pkg || 'Not specified',
         message:   msg + estimateNote,
         source:    'website_contact_form',
-        createdAt: window.__ts()
+        createdAt: window.__ts(),
+        ...utmParams
       });
 
       submitBtn.innerHTML = '✓ Message Sent! ' + sendIcon();

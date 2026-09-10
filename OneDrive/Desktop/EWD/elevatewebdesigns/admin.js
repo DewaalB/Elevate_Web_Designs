@@ -624,6 +624,7 @@ function buildLeadCard(lead) {
           ${lead.phone ? ' · <a href="tel:' + escapeAttr(lead.phone) + '">' + escapeHtml(lead.phone) + '</a>' : ''}
         </div>
         ${lead.package ? '<div class="lead-package">' + escapeHtml(lead.package) + '</div>' : ''}
+        ${(lead.utm_source || lead.utm_medium || lead.utm_campaign) ? '<div class="lead-utm">🔗 ' + escapeHtml(lead.utm_source || '—') + ' · ' + escapeHtml(lead.utm_medium || '—') + ' · ' + escapeHtml(lead.utm_campaign || '—') + '</div>' : ''}
       </div>
       <div class="lead-date">${date}</div>
     </div>
