@@ -88,15 +88,29 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 50);
 }, { passive: true });
 
-/* ── MOBILE MENU ── */
-const hamburger  = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobile-menu');
-const closeMenu  = document.getElementById('close-menu');
+/* ── MOBILE MENU (slide-in side panel) ── */
+const hamburger        = document.getElementById('hamburger');
+const mobileMenu       = document.getElementById('mobile-menu');
+const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+const closeMenu         = document.getElementById('close-menu');
 
-hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
-closeMenu.addEventListener('click', () => mobileMenu.classList.remove('open'));
+function openMobileMenu() {
+  mobileMenu.classList.add('open');
+  mobileMenuBackdrop.classList.add('open');
+}
+function closeMobileMenu() {
+  mobileMenu.classList.remove('open');
+  mobileMenuBackdrop.classList.remove('open');
+}
+
+hamburger.addEventListener('click', openMobileMenu);
+closeMenu.addEventListener('click', closeMobileMenu);
+mobileMenuBackdrop.addEventListener('click', closeMobileMenu);
 document.querySelectorAll('.mm-link').forEach(l => {
-  l.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  l.addEventListener('click', closeMobileMenu);
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && mobileMenu.classList.contains('open')) closeMobileMenu();
 });
 
 /* ── PRIVACY POLICY MODAL ──

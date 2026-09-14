@@ -123,16 +123,30 @@ nav.scrolled {
   background:none; border:none; cursor:pointer; padding:0;
 }
 .hamburger span { display:block; width:24px; height:2px; background:white; border-radius:2px; transition:all 0.3s; }
-.mobile-menu {
+.mobile-menu-backdrop {
   display:none; position:fixed; inset:0;
+  background: rgba(0,0,0,0.55);
+  z-index:98; opacity:0; transition:opacity 0.3s ease;
+}
+.mobile-menu-backdrop.open { display:block; opacity:1; }
+
+.mobile-menu {
+  position:fixed; top:0; right:0; bottom:0;
+  width:min(78vw, 320px);
   background: rgba(7,14,26,0.98);
   backdrop-filter: blur(20px);
-  z-index:99; flex-direction:column; align-items:center; justify-content:center; gap:2rem;
+  border-left: 1px solid rgba(0,212,255,0.15);
+  box-shadow: -12px 0 40px rgba(0,0,0,0.4);
+  z-index:99; display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:1.75rem;
+  padding: 2rem 2.25rem;
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), visibility 0s linear 0.35s;
 }
-.mobile-menu.open { display:flex; }
-.mobile-menu a { font-family:'Bebas Neue',sans-serif; font-size:2.5rem; letter-spacing:3px; color:white; text-decoration:none; transition:color 0.2s; }
+.mobile-menu.open { transform: translateX(0); visibility: visible; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); }
+.mobile-menu a { font-family:'Bebas Neue',sans-serif; font-size:1.9rem; letter-spacing:2px; color:white; text-decoration:none; transition:color 0.2s; }
 .mobile-menu a:hover { color: var(--cyan); }
-.close-menu { position:absolute; top:1.5rem; right:6%; background:none; border:none; color:white; font-size:2rem; cursor:pointer; }
+.close-menu { position:absolute; top:5.25rem; right:1.5rem; background:none; border:none; color:white; font-size:1.6rem; cursor:pointer; }
 
 #hero {
   min-height:100vh; display:flex; align-items:center;
@@ -330,7 +344,7 @@ section { padding:6rem 6%; }
 
 #portfolio { background: var(--navy); overflow:hidden; }
 .portfolio-intro { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:3rem; flex-wrap:wrap; gap:1rem; }
-.portfolio-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+.portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
 .portfolio-item {
   position: relative; border-radius:12px; overflow:hidden;
   background: var(--navy-mid); border:1px solid rgba(0,212,255,0.1);
@@ -1272,7 +1286,7 @@ img, svg, video, iframe, embed, object {
    black-on-white output. The FAQ is forced open since a print reader
    can't click to expand it. */
 @media print {
-  #nav, .mobile-menu, .hamburger, #cursor, #cursor-ring, #scroll-progress,
+  #nav, .mobile-menu, .mobile-menu-backdrop, .hamburger, #cursor, #cursor-ring, #scroll-progress,
   #particles-canvas, .grid-overlay, .hero-diagonal, .hero-bg, .hero-visual,
   #whatsapp-float, .back-to-top, .skip-link, #toast, .lead-toast,
   .privacy-overlay, #terms-overlay, .copy-btn, .footer-legal {
