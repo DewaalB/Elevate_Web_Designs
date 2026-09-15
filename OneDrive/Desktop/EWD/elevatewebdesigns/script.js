@@ -113,6 +113,29 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && mobileMenu.classList.contains('open')) closeMobileMenu();
 });
 
+/* ── LIVE PORTFOLIO PREVIEWS ──
+   Each .live-preview card holds a real iframe of the actual client site,
+   rendered at a fixed desktop size (1440x900, set in style.css) then
+   scaled down to fit the card at whatever width it's actually displayed
+   at — recalculated on resize so it stays correct across breakpoints.
+   The card's background-image (the old screenshot) is visible until the
+   iframe reports itself loaded, so a slow or unreachable client site
+   never leaves a blank card. */
+const LIVE_PREVIEW_WIDTH = 1440;
+document.querySelectorAll('.live-preview').forEach(card => {
+  const frame = card.querySelector('.live-preview-frame');
+  if (!frame) return;
+
+  const rescale = () => {
+    const scale = card.clientWidth / LIVE_PREVIEW_WIDTH;
+    frame.style.transform = `scale(${scale})`;
+  };
+  rescale();
+  new ResizeObserver(rescale).observe(card);
+
+  frame.addEventListener('load', () => frame.classList.add('loaded'));
+});
+
 /* ── PRIVACY POLICY MODAL ──
    Opened from the footer link and from the consent-notice links above
    the contact form / estimator ("By submitting, you agree to my Privacy

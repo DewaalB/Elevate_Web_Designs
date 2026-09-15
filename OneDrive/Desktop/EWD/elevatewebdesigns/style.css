@@ -361,6 +361,22 @@ section { padding:6rem 6%; }
 .portfolio-item:hover .portfolio-preview { filter: brightness(0.7); }
 .portfolio-preview img { transition: filter 0.4s; width:100%; height:100%; object-fit:cover; object-position:top center; display:block; }
 .portfolio-item:hover .portfolio-preview img { filter: brightness(0.7); }
+
+/* Live client-site preview — a real iframe of the actual site, rendered at
+   desktop size (1440x900, matching the card's 16:10 ratio) then scaled down
+   with a JS-computed transform (script.js) to fit the card at any width.
+   The background-image set inline on .live-preview (the old screenshot)
+   shows instantly; the iframe fades in over it once it's ready, so a slow
+   or unreachable client site never leaves the card blank. */
+.live-preview-frame {
+  position: absolute; top: 0; left: 0;
+  width: 1440px; height: 900px; max-width: none;
+  transform-origin: top left;
+  border: none; pointer-events: none;
+  opacity: 0; transition: opacity 0.5s ease;
+}
+.live-preview-frame.loaded { opacity: 1; }
+.portfolio-item:hover .live-preview-frame { filter: brightness(0.7); }
 .portfolio-overlay {
   position:absolute; inset:0;
   background: linear-gradient(135deg, rgba(7,14,26,0.92), rgba(11,24,40,0.95));
