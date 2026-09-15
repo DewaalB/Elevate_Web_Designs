@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 
-Sitemap: https://www.elevatewebdesign.co.za/sitemap.xml
+Sitemap: https://elevatewebdesign.co.za/sitemap.xml
