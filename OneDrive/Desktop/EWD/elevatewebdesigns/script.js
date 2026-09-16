@@ -413,7 +413,7 @@ function updateCustomQuoteHint() {
       ? ` + ${fmt(lastEstimate.carePrice)}/mo care plan`
       : '';
     document.getElementById('custom-quote-amount').textContent =
-      `${fmt(lastEstimate.low)} – ${fmt(lastEstimate.high)}${careSuffix}`;
+      `${fmt(lastEstimate.low)}${careSuffix}`;
     hint.hidden = false;
   } else {
     hint.hidden = true;
@@ -442,12 +442,11 @@ function calcEstimate() {
   }
 
   document.getElementById('est-low').textContent          = fmt(q.low);
-  document.getElementById('est-high').textContent         = fmt(q.high);
   document.getElementById('est-base-val').textContent     = fmt(q.baseAmt);
   document.getElementById('est-features-val').textContent = q.featureAmt > 0 ? fmt(q.featureAmt) : 'R0';
   document.getElementById('est-rev-val').textContent      = q.revAmt > 0 ? fmt(q.revAmt) : 'R0';
   document.getElementById('est-urgency-val').textContent  = q.urgencyAmt > 0 ? fmt(q.urgencyAmt) + ' (rush)' : 'R0';
-  document.getElementById('est-total-val').textContent    = fmt(q.low) + ' – ' + fmt(q.high);
+  document.getElementById('est-total-val').textContent    = fmt(q.low);
 
   document.getElementById('val-pages').textContent     = pages;
   document.getElementById('val-revisions').textContent = revisions;
@@ -506,7 +505,7 @@ estCtaBtn.addEventListener('click', () => {
     `Extra features: ${featureStr}`,
     `Rounds of changes: ${est.revisions}`,
     `Timeline: ${est.urgency} week(s)`,
-    `Estimate: ${fmt(est.low)} – ${fmt(est.high)} (once-off)`,
+    `Estimate: ${fmt(est.low)} (once-off)`,
     `Care plan: ${est.carePrice > 0 ? `${est.careLabel} (${fmt(est.carePrice)}/mo)` : 'None'}`,
     "I'd love a confirmed quote!"
   ];

@@ -22,16 +22,16 @@ window.EWD_PRICING = {
 
   /* Once-off add-ons */
   FEATURES: [
-    { id: 'contact_form',   label: 'Contact Form',          price: 800,  desc: 'A form so visitors can message you directly from the site' },
-    { id: 'booking',        label: 'Booking System',        price: 1200, desc: 'Let customers book appointments or sessions online' },
-    { id: 'whatsapp',       label: 'WhatsApp Integration',  price: 600,  desc: 'A one-tap button so visitors can chat to you on WhatsApp' },
-    { id: 'maps',           label: 'Google Maps & Business',price: 900,  desc: 'Shows your location and opening hours so people can find you' },
-    { id: 'seo',            label: 'SEO Package',           price: 1500, desc: 'Helps your site show up higher when people search Google' },
-    { id: 'gallery',        label: 'Photo Gallery',         price: 700,  desc: 'A gallery page to show off your products, work or space' },
-    { id: 'blog',           label: 'Blog / News Section',   price: 1000, desc: 'A place to post updates, news or articles over time' },
-    { id: 'analytics',      label: 'Google Analytics',      price: 800,  desc: 'See how many people visit your site and what they look at' },
-    { id: 'data_storage',   label: 'Online Data Storage',   price: 1100, desc: 'Powers things like saved bookings, forms or a login area' },
-    { id: 'social',         label: 'Social Media Links',    price: 500,  desc: 'Buttons linking to your Facebook, Instagram and more' },
+    { id: 'contact_form',   label: 'Contact Form',          price: 500,  desc: 'A form so visitors can message you directly from the site' },
+    { id: 'booking',        label: 'Booking System',        price: 1000, desc: 'Let customers book appointments or sessions online' },
+    { id: 'whatsapp',       label: 'WhatsApp Integration',  price: 350,  desc: 'A one-tap button so visitors can chat to you on WhatsApp' },
+    { id: 'maps',           label: 'Google Maps & Business',price: 500,  desc: 'Shows your location and opening hours so people can find you' },
+    { id: 'seo',            label: 'SEO Package',           price: 1000, desc: 'Helps your site show up higher when people search Google' },
+    { id: 'gallery',        label: 'Photo Gallery',         price: 500,  desc: 'A gallery page to show off your products, work or space' },
+    { id: 'blog',           label: 'Blog / News Section',   price: 750,  desc: 'A place to post updates, news or articles over time' },
+    { id: 'analytics',      label: 'Google Analytics',      price: 500,  desc: 'See how many people visit your site and what they look at' },
+    { id: 'data_storage',   label: 'Online Data Storage',   price: 800,  desc: 'Powers things like saved bookings, forms or a login area' },
+    { id: 'social',         label: 'Social Media Links',    price: 250,  desc: 'Buttons linking to your Facebook, Instagram and more' },
   ],
 
   /* Monthly care plans */
@@ -43,9 +43,9 @@ window.EWD_PRICING = {
 
   /* Headline packages (display only — the estimator prices per page) */
   PACKAGES: [
-    { label: 'Starter',      price: 3500 },
-    { label: 'Professional', price: 7500 },
-    { label: 'Premium',      price: 14000 },
+    { label: 'Starter',      price: 2999 },
+    { label: 'Professional', price: 5999 },
+    { label: 'Premium',      price: 9999 },
   ],
 
   /* Business details used on generated quotes */
@@ -57,9 +57,13 @@ window.EWD_PRICING = {
   },
 };
 
-/* Format a number as Rands, e.g. 3500 -> "R3,500" */
+/* Format a number as Rands, e.g. 2999 -> "R2,999".
+   Built by hand rather than toLocaleString('en-ZA') — that locale's ICU
+   data inserts a space as the thousands separator (e.g. "R2 999"), not
+   a comma, inconsistent with every hardcoded price elsewhere on the
+   site and not guaranteed to render the same across browsers anyway. */
 window.EWD_PRICING.fmt = function (n) {
-  return 'R' + Math.round(n).toLocaleString('en-ZA');
+  return 'R' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
 /* The one calculation both the public estimator and the manager app use.
