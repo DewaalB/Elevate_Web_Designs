@@ -148,6 +148,7 @@ export const onpageChecks = [
     const def = { id: 'onpage.few-inbound', category: C, title: 'Pages receive enough internal links', weight: 2,
       fix: 'Add contextual links to these pages from related content. Internal links pass authority and tell Google which pages matter.' };
     if (site.crawl.limitHit) return skip(def, 'The crawl hit its page limit, so link counts would be incomplete. Re-run with a higher page limit.');
+    if (indexable.length < 4) return skip(def, 'Too few pages for internal link counts to be meaningful.');
     return pageCheck(def, indexable.filter(p => p !== home && p.via !== 'sitemap'), p => (inbound.get(p.finalUrl) || 0) <= 1 && `${plural(inbound.get(p.finalUrl) || 0, 'page')} link here`,
       { passMessage: 'Every page is linked from at least two others.', failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'is' : 'are'} linked from only one page.` });
   },

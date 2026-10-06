@@ -92,10 +92,10 @@ export const schemaChecks = [
   function requiredProperties({ pages }) {
     const def = { id: 'schema.required-properties', category: C, title: 'Rich-result markup has required properties', weight: 6,
       fix: 'Add the missing properties listed. Without them Google won\'t show rich results (stars, FAQs, breadcrumbs, prices) for the page.' };
-    const withRich = pages.filter(p => p.schemaNodes.some(n => typesOf(n).some(t => REQUIRED[t] || isLocalType(t))));
+    const withRich = pages.filter(p => p.schemaRoots.some(n => typesOf(n).some(t => REQUIRED[t] || isLocalType(t))));
     if (!withRich.length) return skip(def, 'No rich-result types (Product, FAQ, Breadcrumb, Event, LocalBusiness…) found.');
     const r = pageCheck(def, withRich, p => {
-      const miss = [...new Set(p.schemaNodes.flatMap(missingRequired))];
+      const miss = [...new Set(p.schemaRoots.flatMap(missingRequired))];
       return miss.length && `Missing ${miss.slice(0, 4).join('; ')}`;
     }, { passMessage: `Required properties present on all ${withRich.length} pages with rich-result markup.` });
     r.message += ' (Checked against Google\'s documented required properties — use Google\'s Rich Results Test for full validation.)';

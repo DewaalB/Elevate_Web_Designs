@@ -44,6 +44,10 @@
 .qc-grid div { background: var(--navy-mid); border: 1px solid var(--line); border-radius: 12px; padding: 1rem; }
 .qc-grid strong { color: var(--white); }
 .qc-grid p { color: var(--gray); font-size: 0.88rem; margin-top: 0.3rem; }
+.qc-faq { display: grid; gap: 0.5rem; }
+.qc-faq h2 { font-size: 1.3rem; color: var(--white); margin-bottom: 0.4rem; }
+.qc-faq h3 { font-size: 1rem; color: var(--white); margin-top: 0.8rem; }
+.qc-faq p { color: var(--gray); font-size: 0.92rem; }
 .qc-footer { text-align: center; padding: 2rem 5%; border-top: 1px solid var(--line); }
 
 @media (max-width: 560px) {

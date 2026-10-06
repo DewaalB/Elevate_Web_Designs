@@ -114,6 +114,11 @@ export function extractPage(html, url, rootHost) {
     catch (e) { return { ok: false, error: e.message, snippet: raw.slice(0, 160) }; }
   });
   const schemaNodes = jsonLd.filter(j => j.ok).flatMap(j => jsonLdNodes(j.data));
+  // Top-level items only (each block, or each @graph entry). Nested nodes like a
+  // "provider" are references, so Google doesn't require their full properties.
+  const schemaRoots = jsonLd.filter(j => j.ok)
+    .flatMap(j => [].concat(j.data).flatMap(d => (d && d['@graph'] ? [].concat(d['@graph']) : [d])))
+    .filter(n => n && typeof n === 'object' && n['@type']);
   const microdataTypes = [...new Set([...doc.querySelectorAll('[itemscope][itemtype]')]
     .map(e => e.getAttribute('itemtype').split('/').pop()))];
 
@@ -204,6 +209,7 @@ export function extractPage(html, url, rootHost) {
     jsonLdBlocks: jsonLd.length,
     jsonLdErrors: jsonLd.filter(j => !j.ok).map(j => ({ error: j.error, snippet: j.snippet })),
     schemaNodes,
+    schemaRoots,
     schemaTypes: [...new Set(schemaNodes.flatMap(typesOf))],
     microdataTypes,
     headings,
