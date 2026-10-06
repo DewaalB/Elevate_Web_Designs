@@ -10,7 +10,7 @@ import { esc, ring, tone } from './render.js';
 
 /* Cloudflare dashboard → Turnstile → Add widget (domain elevatewebdesign.co.za)
    → paste the *site key* here. The secret key goes on the worker. */
-const TURNSTILE_SITE_KEY = '';
+const TURNSTILE_SITE_KEY = '0x4AAAAAAFPkEwLNejfWeOAy';
 const TURNSTILE_TEST_KEY = '1x00000000000000000000AA'; // Cloudflare's always-pass key, local testing only
 const SITE_KEY = DEV_MODE ? TURNSTILE_TEST_KEY : TURNSTILE_SITE_KEY;
 
