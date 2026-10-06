@@ -211,41 +211,8 @@
         <a href="#portfolio" class="btn-secondary">See My Work</a>
       </div>
     </div>
-    <div class="hero-visual">
-      <div class="device-mockup">
-        <div class="browser-frame bf-main">
-          <div class="browser-bar">
-            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
-          </div>
-          <div class="browser-content">
-            <div class="bc-nav"></div>
-            <div class="bc-hero-strip">YOUR BUSINESS ONLINE</div>
-            <div class="bc-row">
-              <div class="bc-block" style="flex:2;height:60px;"></div>
-              <div class="bc-block" style="flex:1;height:60px;"></div>
-            </div>
-            <div class="bc-row">
-              <div class="bc-block" style="flex:1;height:45px;"></div>
-              <div class="bc-block" style="flex:1;height:45px;"></div>
-              <div class="bc-block" style="flex:1;height:45px;"></div>
-            </div>
-          </div>
-        </div>
-        <div class="browser-frame bf-mobile">
-          <div class="browser-bar" style="padding:0 6px;gap:4px;">
-            <div class="dot dot-r" style="width:6px;height:6px;"></div>
-            <div class="dot dot-y" style="width:6px;height:6px;"></div>
-            <div class="dot dot-g" style="width:6px;height:6px;"></div>
-          </div>
-          <div class="browser-content" style="padding:0.6rem;gap:6px;">
-            <div class="bc-nav"></div>
-            <div class="bc-hero-strip" style="height:60px;font-size:0.7rem;padding:0 8px;">MOBILE READY</div>
-            <div class="bc-block" style="height:30px;"></div>
-            <div class="bc-block" style="height:30px;"></div>
-            <div class="bc-block" style="height:30px;"></div>
-          </div>
-        </div>
-      </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div id="hero-anim"></div>
     </div>
   </section>
 
@@ -968,5 +935,6 @@
 
   <script src="pricing.js"></script>
   <script src="script.js"></script>
+  <script src="hero-anim.js" defer></script>
 </body>
 </html>

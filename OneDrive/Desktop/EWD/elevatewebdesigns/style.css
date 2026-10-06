@@ -253,28 +253,25 @@ h1 .outline {
   display:flex; align-items:center; justify-content:center;
   z-index:1; pointer-events:none;
 }
-.device-mockup { width:480px; height:340px; position:relative; }
-.browser-frame {
-  position:absolute;
-  background: var(--navy-mid);
-  border-radius:10px; border:1px solid rgba(0,212,255,0.2);
-  overflow:hidden;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04), 0 0 40px rgba(0,212,255,0.05);
-}
-.bf-main { width:420px; height:280px; top:0; left:0; animation:float 6s ease-in-out infinite; }
-.bf-mobile { width:130px; height:230px; top:60px; right:-10px; border-radius:16px; animation:float 6s 1.5s ease-in-out infinite; }
-.browser-bar { height:28px; background:rgba(255,255,255,0.04); display:flex; align-items:center; padding:0 10px; gap:6px; border-bottom:1px solid rgba(255,255,255,0.05); }
-.dot { width:8px; height:8px; border-radius:50%; }
-.dot-r { background:#ff5f57; } .dot-y { background:#ffbd2e; } .dot-g { background:#28ca41; }
-.browser-content { padding:1rem; display:flex; flex-direction:column; gap:8px; }
-.bc-nav { height:8px; width:100%; background:rgba(0,212,255,0.06); border-radius:4px; margin-bottom:8px; }
-.bc-hero-strip {
-  background: var(--navy-light); border-radius:6px; height:80px;
-  display:flex; align-items:center; padding:0 12px;
-  font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:1px; color:var(--cyan);
-}
-.bc-row { display:flex; gap:8px; }
-.bc-block { background:rgba(0,212,255,0.06); border-radius:4px; border:1px solid rgba(0,212,255,0.1); }
+/* Hero animation (hero-anim.js) — 940×720 stage, scaled to fit the column */
+#hero-anim { position:absolute; inset:4rem 2% 2rem 0; }
+.ha-stage { position:absolute; left:50%; top:50%; width:940px; height:720px; transform-origin:50% 50%; font-family:'Outfit',system-ui,sans-serif; }
+.ha-browser { position:absolute; left:90px; top:130px; width:760px; height:460px; border-radius:16px; background:#0f1829; border:1px solid #1f2e48; box-shadow:0 40px 90px rgba(0,0,0,.5); overflow:hidden; }
+.ha-chrome { height:44px; box-sizing:border-box; background:#131e31; display:flex; align-items:center; gap:18px; padding:0 18px; border-bottom:1px solid #1f2e48; }
+.ha-dots { display:flex; gap:7px; }
+.ha-dots i { display:block; width:10px; height:10px; border-radius:50%; }
+.ha-url { flex:1; height:24px; border-radius:12px; background:#0a0f1c; display:flex; align-items:center; padding:0 14px; font-size:13px; color:#8a9bb8; }
+.ha-body { padding:64px 56px; display:grid; gap:22px; }
+.ha-head { font-family:'Bebas Neue','Oswald',sans-serif; font-size:76px; line-height:.95; color:#e8eef8; min-height:145px; }
+.ha-accent { color:#1ad4ff; }
+.ha-caret { display:inline-block; width:3px; height:60px; margin-left:4px; background:#1ad4ff; vertical-align:-6px; opacity:0; }
+.ha-sub { display:grid; gap:8px; }
+.ha-sub div { height:10px; border-radius:5px; background:#1f2e48; }
+.ha-cta-wrap { position:relative; justify-self:start; margin-top:10px; }
+.ha-ripple { position:absolute; inset:0; border-radius:8px; border:2px solid #1ad4ff; opacity:0; }
+.ha-cta { transform-origin:left center; background:#2b8cff; color:#fff; font-weight:600; font-size:17px; padding:14px 26px; border-radius:8px; min-width:150px; text-align:center; }
+.ha-cta.is-done { background:#2fd27a; }
+.ha-cursor { position:absolute; left:720px; top:660px; opacity:0; filter:drop-shadow(0 4px 8px rgba(0,0,0,.5)); }
 
 .stats-strip {
   padding:3rem 6%; display:grid;
@@ -936,8 +933,10 @@ footer { background: var(--navy); border-top: 1px solid rgba(0,212,255,0.08); }
 @media (max-width:900px) {
   .nav-links { display:none; }
   .hamburger { display:flex; }
-  .hero-visual { display:none; }
-  #hero { padding:7rem 6% 4rem; }
+  #hero { padding:7rem 6% 4rem; flex-direction:column; align-items:stretch; }
+  /* Animation drops below the hero copy, full width at the stage's aspect ratio */
+  .hero-visual { position:relative; inset:auto; width:100%; max-width:560px; margin:2.5rem auto 0; aspect-ratio:940/720; }
+  #hero-anim { inset:0; }
   .about-grid, .contact-grid { grid-template-columns:1fr; gap:3rem; }
   .about-visual { display:none; }
   .form-row { grid-template-columns:1fr; }
