@@ -19,11 +19,14 @@ export class QuickError extends Error {
 async function verifyTurnstile(token, ip, env) {
   if (!token || typeof token !== 'string') throw new QuickError('captcha_failed', 'Please complete the "I\'m human" check.', 403);
   const form = new FormData();
-  form.append('secret', env.TURNSTILE_SECRET);
+  // Tolerate stray whitespace/quotes from pasting the secret into a terminal.
+  form.append('secret', String(env.TURNSTILE_SECRET).trim().replace(/^["']|["']$/g, '').trim());
   form.append('response', token);
   if (ip) form.append('remoteip', ip);
   const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: form });
   const data = await res.json().catch(() => ({}));
+  // Reason codes show in `npx wrangler tail` (e.g. invalid-input-secret = wrong TURNSTILE_SECRET).
+  if (!data.success) console.log('turnstile rejected', JSON.stringify(data['error-codes']));
   if (!data.success) throw new QuickError('captcha_failed', 'The "I\'m human" check expired or failed. Please try again.', 403);
 }
 
