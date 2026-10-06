@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Growth Tools — SEO, Speed &amp; Competitor Analysis | Elevate Web Design</title>
+  <meta name="description" content="Free website growth tools: SEO audit, website health dashboard, performance analyzer and competitor comparison for South African businesses.">
+  <link rel="canonical" href="https://elevatewebdesign.co.za/website-growth.html">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#070e1a">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://elevatewebdesign.co.za/website-growth.html">
+  <meta property="og:title" content="Elevate Website Growth — free SEO, speed and competitor analysis">
+  <meta property="og:description" content="Analyse your website, find problems and discover opportunities to improve your online presence.">
+  <meta property="og:image" content="https://elevatewebdesign.co.za/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,8 92,88 8,88' fill='none' stroke='%2300d4ff' stroke-width='7' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="seo.css">
+  <link rel="stylesheet" href="growth.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="/">ELEVATE <span class="accent">WEB DESIGN</span></a>
+    <nav class="g-nav" aria-label="Site">
+      <a href="/">Home</a>
+      <a href="/#services">Services</a>
+      <a href="/#pricing">Pricing</a>
+      <a href="website-growth.html" aria-current="page">Website Growth</a>
+      <a class="btn primary small" href="/#contact">Get a Quote</a>
+    </nav>
+  </header>
+
+  <main class="g-main">
+    <section class="g-hero">
+      <span class="eyebrow" id="g-mode">Free tools · No sign-up</span>
+      <h1>ELEVATE <span class="accent">WEBSITE GROWTH</span></h1>
+      <p class="g-lead">Analyse your website, find problems and discover opportunities to improve your online presence.</p>
+
+      <form id="g-form" class="panel g-form" novalidate>
+        <label class="field g-url">
+          <span>Website URL</span>
+          <input type="text" id="g-url" placeholder="https://example.com" autocomplete="url" inputmode="url" required>
+        </label>
+        <div class="g-opts">
+          <label class="field"><span>Max pages</span><select id="g-pages"></select></label>
+          <label class="field"><span>Crawl depth</span><select id="g-depth"></select></label>
+        </div>
+        <button type="submit" class="btn primary" id="g-btn">Analyse Website</button>
+        <div id="g-turnstile" class="g-turnstile"></div>
+        <p class="error-text" id="g-error" role="alert"></p>
+        <p class="muted small" id="g-limits"></p>
+      </form>
+    </section>
+
+    <section class="panel g-progress" id="g-progress" hidden aria-live="polite">
+      <div class="progress-head">
+        <strong id="g-progress-title">Scanning website…</strong>
+        <button class="btn ghost small" id="g-cancel" type="button">Cancel</button>
+      </div>
+      <div class="bar"><div class="bar-fill" id="g-bar"></div></div>
+      <ul class="g-pages-live" id="g-live"></ul>
+      <p class="muted small">Keep this page open until the scan finishes.</p>
+    </section>
+
+    <section id="g-results" hidden>
+      <div class="tabs g-tabs" role="tablist">
+        <button role="tab" class="tab active" data-tab="health" aria-selected="true">Health Dashboard</button>
+        <button role="tab" class="tab" data-tab="seo" aria-selected="false">SEO Auditor</button>
+        <button role="tab" class="tab" data-tab="perf" aria-selected="false">Performance</button>
+        <button role="tab" class="tab" data-tab="compete" aria-selected="false">Competitors</button>
+        <button role="tab" class="tab" data-tab="history" aria-selected="false">History</button>
+      </div>
+      <div class="tab-panel" data-panel="health"></div>
+      <div class="tab-panel" data-panel="seo" hidden></div>
+      <div class="tab-panel" data-panel="perf" hidden></div>
+      <div class="tab-panel" data-panel="compete" hidden></div>
+      <div class="tab-panel" data-panel="history" hidden></div>
+    </section>
+
+    <section class="g-about">
+      <h2>Four tools, one scan</h2>
+      <div class="qc-grid g-tools">
+        <div><strong>SEO Auditor</strong><p>Crawls your pages and checks titles, descriptions, headings, links, images, structured data and social previews.</p></div>
+        <div><strong>Website Health</strong><p>One score for SEO, performance, technical health, content, images, mobile and security, with your top opportunities.</p></div>
+        <div><strong>Performance Analyzer</strong><p>Measures every file your homepage loads: sizes, compression, caching and server speed.</p></div>
+        <div><strong>Competitor Analyzer</strong><p>Scans up to three competitors the same way and shows where you lead and where you can catch up.</p></div>
+      </div>
+      <p class="muted small" id="g-method">How we score: every check is weighted by how much it affects your visibility on Google; scores you can't measure are left out rather than guessed. Speed is measured from our scanning server, and Google Lighthouse figures appear only when PageSpeed data is available. Want a quick look instead? Try the <a href="free-seo-check.html">Free SEO Check</a>.</p>
+    </section>
+  </main>
+
+  <footer class="qc-footer muted small">
+    © Elevate Web Design · <a href="tel:+27825368312">082 536 8312</a> · <a href="https://wa.me/27825368312" target="_blank" rel="noopener">WhatsApp</a> · <a href="/">Home</a> · <a href="/#contact">Contact</a>
+  </footer>
+
+  <div class="confirm-overlay" id="g-lead" hidden>
+    <form class="panel g-lead-card" id="g-lead-form" novalidate>
+      <h3>Download your report</h3>
+      <p class="muted small">We'll email you a copy too, and can help you fix anything it finds. No spam.</p>
+      <label class="field"><span>Name</span><input id="gl-name" autocomplete="name" required maxlength="150"></label>
+      <label class="field"><span>Email</span><input id="gl-email" type="email" autocomplete="email" required maxlength="150"></label>
+      <label class="field"><span>WhatsApp / phone (optional)</span><input id="gl-phone" type="tel" autocomplete="tel" maxlength="40"></label>
+      <p class="error-text" id="gl-error" role="alert"></p>
+      <div class="g-lead-actions"><button type="button" class="btn ghost" id="gl-cancel">Cancel</button><button type="submit" class="btn primary" id="gl-btn">Get report</button></div>
+    </form>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+  <script type="module" src="seo/growth/app.js"></script>
+</body>
+</html>

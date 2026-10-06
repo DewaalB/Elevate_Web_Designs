@@ -15,12 +15,16 @@ export class ApiError extends Error {
 
 export const WORKER_URL = DEV_MODE ? DEV_WORKER_URL : PROD_WORKER_URL;
 
-export function createApi(getToken) {
+/** getToken: admin sign-in token getter. getSession (optional): public scan
+ *  session id — when it returns one, requests use it instead of a sign-in. */
+export function createApi(getToken, { getSession } = {}) {
   const base = WORKER_URL;
 
   async function postOnce(path, body, signal) {
     const headers = { 'content-type': 'application/json' };
-    if (!DEV_MODE) headers.authorization = `Bearer ${await getToken()}`;
+    const sid = getSession?.();
+    if (sid) headers['x-session'] = sid;
+    else if (!DEV_MODE) headers.authorization = `Bearer ${await getToken()}`;
     let res;
     try {
       res = await fetch(base + path, { method: 'POST', headers, body: JSON.stringify(body), signal });
@@ -53,6 +57,7 @@ export function createApi(getToken) {
     base,
     fetchPage: (url, signal) => post('/fetch', { url }, signal),
     checkUrl: (url, signal) => post('/check', { url }, signal),
+    measureUrl: (url, signal) => post('/measure', { url }, signal),
     ai: (summary, signal) => post('/ai', { summary }, signal, { retries: 1 }),
     async health() {
       try { const r = await fetch(base + '/health'); return r.ok ? await r.json() : null; } catch { return null; }

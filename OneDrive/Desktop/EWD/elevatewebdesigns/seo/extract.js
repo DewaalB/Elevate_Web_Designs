@@ -163,6 +163,29 @@ export function extractPage(html, url, rootHost) {
     };
   });
 
+  // ── Resources the page loads (for the performance analyzer) ──
+  const resources = [];
+  const addRes = (u, type, extra = {}) => { const a = u && !u.startsWith('data:') ? abs(u) : null; if (a) resources.push({ url: a, type, ...extra }); };
+  doc.querySelectorAll('script[src]').forEach(s => addRes(s.getAttribute('src'), 'script', {
+    blocking: !!s.closest('head') && !s.hasAttribute('async') && !s.hasAttribute('defer') && !/module/i.test(s.getAttribute('type') || ''),
+  }));
+  doc.querySelectorAll('link[rel~="stylesheet" i][href]').forEach(l => addRes(l.getAttribute('href'), 'stylesheet', { blocking: !l.hasAttribute('media') || /^(all|screen)$/i.test(l.getAttribute('media')) }));
+  doc.querySelectorAll('link[rel~="preload" i][href][as]').forEach(l => {
+    const as = l.getAttribute('as').toLowerCase();
+    addRes(l.getAttribute('href'), as === 'font' ? 'font' : as === 'style' ? 'stylesheet' : as === 'script' ? 'script' : as === 'image' ? 'image' : 'other');
+  });
+  doc.querySelectorAll('img').forEach(img => {
+    const srcset = img.getAttribute('srcset') || img.getAttribute('data-srcset');
+    addRes(img.getAttribute('src') || img.getAttribute('data-src') || (srcset ? srcset.split(',')[0].trim().split(/\s+/)[0] : null), 'image', {
+      lazy: (img.getAttribute('loading') || '').toLowerCase() === 'lazy' || img.hasAttribute('data-src'),
+      hasDims: img.hasAttribute('width') && img.hasAttribute('height'),
+    });
+  });
+  doc.querySelectorAll('video[poster]').forEach(v => addRes(v.getAttribute('poster'), 'image'));
+  doc.querySelectorAll('iframe[src]').forEach(f => addRes(f.getAttribute('src'), 'iframe'));
+  const inlineScriptBytes = [...doc.querySelectorAll('script:not([src])')].reduce((n, s) => n + s.textContent.length, 0);
+  const inlineStyleBytes = [...doc.querySelectorAll('style')].reduce((n, s) => n + s.textContent.length, 0);
+
   // ── Mixed content ──
   const mixedContent = isHttps ? [...new Set([...doc.querySelectorAll('img[src], script[src], iframe[src], link[rel~="stylesheet" i][href], source[src], video[src], audio[src]')]
     .map(e => e.getAttribute('src') || e.getAttribute('href')).filter(v => /^http:\/\//i.test(v || '')))] : [];
@@ -206,6 +229,7 @@ export function extractPage(html, url, rootHost) {
     favicons,
     og, twitterCard,
     renderBlockingScripts, stylesheets, scriptCount, appShell,
+    resources: [...new Map(resources.map(r => [r.url, r])).values()], inlineScriptBytes, inlineStyleBytes,
     jsonLdBlocks: jsonLd.length,
     jsonLdErrors: jsonLd.filter(j => !j.ok).map(j => ({ error: j.error, snippet: j.snippet })),
     schemaNodes,

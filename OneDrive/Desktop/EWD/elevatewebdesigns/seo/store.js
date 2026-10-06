@@ -36,7 +36,7 @@ export function createStore(db) {
       const ref = await addDoc(col, {
         url: report.homeUrl,
         host: report.rootHost,
-        overall: report.overall ?? -1,
+        overall: report.growth?.health?.overall ?? report.overall ?? -1,
         scores: Object.fromEntries(report.categories.map(c => [c.id, c.score ?? -1])),
         counts: report.counts,
         pageCount: report.pages.length,

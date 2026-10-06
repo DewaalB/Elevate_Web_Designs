@@ -9,11 +9,12 @@ import { imageChecks } from './checks/images.js';
 import { performanceChecks } from './checks/performance.js';
 import { localChecks } from './checks/local.js';
 import { schemaChecks } from './checks/schema.js';
+import { securityChecks } from './checks/security.js';
 import { buildFixes } from './fixes.js';
 
 export const ALL_CHECKS = [
   ...technicalChecks, ...onpageChecks, ...contentChecks, ...imageChecks,
-  ...performanceChecks, ...localChecks, ...schemaChecks,
+  ...performanceChecks, ...localChecks, ...schemaChecks, ...securityChecks,
 ];
 export const REPORT_VERSION = 1;
 

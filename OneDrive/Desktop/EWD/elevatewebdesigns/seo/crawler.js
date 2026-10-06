@@ -15,7 +15,7 @@ import { parseSitemap } from './sitemap.js';
 import { extractPage } from './extract.js';
 import { runPageSpeed } from './api.js';
 
-const LIMITS = { internalChecks: 150, externalChecks: 100, imageChecks: 150, canonicalChecks: 50, sitemapUrls: 5000, childSitemaps: 10 };
+const DEFAULT_LIMITS = { internalChecks: 150, externalChecks: 100, imageChecks: 150, canonicalChecks: 50, sitemapUrls: 5000, childSitemaps: 10 };
 const UNVERIFIABLE = new Set([401, 403, 405, 406, 429, 999]);
 
 const sleep = (ms, signal) => new Promise((res, rej) => {
@@ -40,6 +40,21 @@ async function runQueue(queue, concurrency, handler, signal) {
   });
 }
 
+/** Friendly explanation when the start page can't be loaded. */
+function startFailureMessage(r, url) {
+  const host = (() => { try { return new URL(url).hostname; } catch { return url; } })();
+  if (r.error === 'timeout') return `${host} took too long to respond, so the scan couldn't start. Try again in a few minutes.`;
+  if (r.error === 'blocked') return `That address can't be scanned: ${r.message}`;
+  if (r.error === 'redirect_loop' || r.error === 'too_many_redirects') return `${host} redirects in a loop, so the page never loads. This needs fixing on the website itself.`;
+  if (r.error) return `We couldn't connect to ${host}. Check the address — the site may be offline, the domain may not exist, or its security (SSL) certificate may be invalid.`;
+  if ([401, 403, 429].includes(r.status) || r.headers?.['cf-mitigated'] || (r.status === 503 && /cloudflare|sucuri|akamai/i.test(r.headers?.server || '')))
+    return `We couldn't complete the scan because ${host} is blocking automated requests (HTTP ${r.status}).`;
+  if (r.status === 404 || r.status === 410) return `That page doesn't exist on ${host} (HTTP ${r.status}). Check the address.`;
+  if (r.status >= 500) return `${host} returned a server error (HTTP ${r.status}). The website may be down — try again later.`;
+  if (r.status >= 400) return `${host} refused the request (HTTP ${r.status}).`;
+  return `That address didn't return a web page (${r.contentType || 'no content'}).`;
+}
+
 export const isBroken = r => !!r && (r.error ? !['blocked'].includes(r.error) : r.status >= 400 && !UNVERIFIABLE.has(r.status));
 export const isUnverifiable = r => !!r && !r.error && UNVERIFIABLE.has(r.status);
 
@@ -53,6 +68,7 @@ export const isUnverifiable = r => !!r && !r.error && UNVERIFIABLE.has(r.status)
  */
 export async function crawlSite({ startUrl, settings, api, onProgress, signal }) {
   const progress = (phase, extra = {}) => onProgress?.({ phase, ...extra });
+  const LIMITS = { ...DEFAULT_LIMITS, ...(settings.limits || {}) };
   const startedAt = Date.now();
 
   // ── 1. Start URL ──
@@ -61,9 +77,8 @@ export async function crawlSite({ startUrl, settings, api, onProgress, signal })
   if (!start) throw new Error('That does not look like a valid website address.');
   progress('start', { message: `Loading ${start}` });
   const first = await api.fetchPage(start, signal);
-  if (first.error || first.status >= 400 || !first.body) {
-    const why = first.error ? first.message : `HTTP ${first.status}`;
-    throw new Error(`Could not load ${start} (${why}). Check the address and try again.`);
+  if (first.error || first.status >= 400 || !first.body || !/html/i.test(first.contentType || '')) {
+    throw new Error(startFailureMessage(first, start));
   }
   const home = normalizeUrl(first.finalUrl);
   const rootHost = new URL(home).hostname;
@@ -136,6 +151,7 @@ export async function crawlSite({ startUrl, settings, api, onProgress, signal })
   const blockedByRobots = [];
   const queue = [];
   let limitHit = false;
+  let budgetHit = false;
 
   const enqueue = (url, depth, via) => {
     if (!url || seen.has(url) || !isSameSite(url, rootHost) || isFileUrl(url)) return;
@@ -146,15 +162,18 @@ export async function crawlSite({ startUrl, settings, api, onProgress, signal })
   };
 
   const handle = async ({ url, depth, via }) => {
+    progress('page', { url, state: 'start' });
     let r;
     try { r = await api.fetchPage(url, signal); }
     catch (e) {
       if (e.name === 'AbortError' || e.status === 401) throw e;
+      if (e.code === 'budget_exhausted') { budgetHit = true; queue.length = 0; return; }
       r = { requestedUrl: url, finalUrl: url, status: 0, redirects: [], error: 'worker', message: e.message };
     }
     const { body, ...meta } = r;
     const rec = { url, depth, via, ...meta, finalUrl: normalizeUrl(r.finalUrl) || url };
     records.push(rec);
+    progress('page', { url, state: 'done', status: r.error ? r.error : r.status, queued: queue.length });
     progress('crawl', { done: records.length, total: Math.max(records.length, seen.size - blockedByRobots.length), message: pathOf(url) });
 
     const html = body != null && /html/i.test(r.contentType || '');
@@ -197,6 +216,7 @@ export async function crawlSite({ startUrl, settings, api, onProgress, signal })
   await runQueue(queue, concurrency, handle, signal);
 
   site.crawl = { maxPages, maxDepth, respectRobots, limitHit, blockedByRobots, fetched: records.length, concurrency };
+  Object.defineProperty(site.crawl, 'budgetHit', { get: () => budgetHit, enumerable: true });
 
   // ── 5. Status checks & probes (PageSpeed runs alongside) ──
   const psiPromise = settings.pageSpeed
@@ -253,7 +273,11 @@ export async function crawlSite({ startUrl, settings, api, onProgress, signal })
     const url = kind === 'probe' ? b : a;
     let r;
     try { r = await api.checkUrl(url, signal); }
-    catch (e) { if (e.name === 'AbortError' || e.status === 401) throw e; r = { status: 0, error: 'worker', message: e.message }; }
+    catch (e) {
+      if (e.name === 'AbortError' || e.status === 401) throw e;
+      if (e.code === 'budget_exhausted') { budgetHit = true; return; } // left unchecked, not "broken"
+      r = { status: 0, error: 'worker', message: e.message };
+    }
     if (kind === 'probe') site.probes[a] = { url, original: c || null, ...r };
     else checks[kind].set(url, r);
     progress('checks', { done: ++done, total: allJobs.length, message: url });

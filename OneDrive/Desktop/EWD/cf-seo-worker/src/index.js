@@ -13,15 +13,22 @@
      /check  {url}       status-only check for links and images
      /ai     {summary}   Claude recommendations (needs the
                          ANTHROPIC_API_KEY secret)
+   POST /measure {url}   download a page resource to measure size/time
+   POST /public/growth/session {urls, turnstileToken}
+                         public Website Growth scan: Turnstile, then a
+                         session id (x-session header) with a request
+                         budget, accepted by /fetch, /check, /measure
    POST /public/quick {url, turnstileToken}
                          public Quick SEO Check — no sign-in, but
                          Turnstile + per-IP/global daily limits
    GET /health           liveness, no auth
    ========================================================= */
 import { verifyAdmin, AuthError } from './auth.js';
-import { fetchChain, checkUrl } from './fetcher.js';
+import { fetchChain, checkUrl, measureUrl } from './fetcher.js';
 import { aiRecommendations, Anthropic } from './ai.js';
 import { quickCheck, QuickError } from './quick.js';
+import { startGrowthSession, consumeSession } from './growth.js';
+export { Limiter } from './limiter.js';
 
 const MAX_BODY = 300_000;
 
@@ -33,7 +40,7 @@ function cors(request, env) {
   return {
     'access-control-allow-origin': origin,
     'access-control-allow-methods': 'POST, GET, OPTIONS',
-    'access-control-allow-headers': 'authorization, content-type',
+    'access-control-allow-headers': 'authorization, content-type, x-session',
     'access-control-max-age': '86400',
     'vary': 'origin',
   };
@@ -70,18 +77,42 @@ export default {
       }
     }
 
-    // Local `wrangler dev` only: .dev.vars can switch auth off for requests to localhost.
-    const devBypass = env.DEV_NO_AUTH === '1' && ['localhost', '127.0.0.1'].includes(url.hostname);
-    if (!devBypass) {
-      try { await verifyAdmin(request, env); }
-      catch (e) {
-        if (e instanceof AuthError) return json({ error: 'unauthorized', message: e.message }, 401, ch);
-        return json({ error: 'auth_unavailable', message: e.message }, 503, ch);
+    if (url.pathname === '/public/growth/session') {
+      if (!ch['access-control-allow-origin']) return json({ error: 'forbidden' }, 403, ch);
+      try {
+        return json(await startGrowthSession(await readJson(request), request, env), 200, ch);
+      } catch (e) {
+        if (e instanceof QuickError) return json({ error: e.code, message: e.message }, e.status, ch);
+        console.log('growth session failed', e.message);
+        return json({ error: 'session_failed', message: 'Could not start the scan. Please try again.' }, 500, ch);
       }
     }
 
     let body;
     try { body = await readJson(request); } catch (e) { return json({ error: 'bad_request', message: e.message }, 400, ch); }
+
+    const session = request.headers.get('x-session');
+    if (session) {
+      // Public scan: limited to /fetch, /check, /measure within the session's budget.
+      if (!ch['access-control-allow-origin']) return json({ error: 'forbidden' }, 403, ch);
+      const kind = { '/fetch': 'fetch', '/check': 'check', '/measure': 'measure' }[url.pathname];
+      if (!kind || typeof body.url !== 'string') return json({ error: 'bad_request', message: 'Not available for public scans.' }, 400, ch);
+      try { await consumeSession(session, body.url, kind, env); }
+      catch (e) {
+        if (e instanceof QuickError) return json({ error: e.code, message: e.message }, e.status, ch);
+        throw e;
+      }
+    } else {
+      // Local `wrangler dev` only: .dev.vars can switch auth off for requests to localhost.
+      const devBypass = env.DEV_NO_AUTH === '1' && ['localhost', '127.0.0.1'].includes(url.hostname);
+      if (!devBypass) {
+        try { await verifyAdmin(request, env); }
+        catch (e) {
+          if (e instanceof AuthError) return json({ error: 'unauthorized', message: e.message }, 401, ch);
+          return json({ error: 'auth_unavailable', message: e.message }, 503, ch);
+        }
+      }
+    }
 
     switch (url.pathname) {
       case '/fetch':
@@ -91,6 +122,10 @@ export default {
       case '/check':
         if (typeof body.url !== 'string') return json({ error: 'bad_request', message: 'url is required' }, 400, ch);
         return json(await checkUrl(body.url), 200, ch);
+
+      case '/measure':
+        if (typeof body.url !== 'string') return json({ error: 'bad_request', message: 'url is required' }, 400, ch);
+        return json(await measureUrl(body.url), 200, ch);
 
       case '/ai': {
         if (!env.ANTHROPIC_API_KEY) return json({ error: 'ai_not_configured', message: 'Add the ANTHROPIC_API_KEY secret to enable AI recommendations.' }, 503, ch);

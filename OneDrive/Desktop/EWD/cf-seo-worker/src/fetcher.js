@@ -11,6 +11,7 @@ const KEEP_HEADERS = [
   'content-type', 'content-length', 'content-encoding', 'x-robots-tag', 'cache-control',
   'last-modified', 'server', 'strict-transport-security', 'link', 'cf-mitigated', 'retry-after',
   'content-language', 'vary', 'x-frame-options',
+  'x-content-type-options', 'referrer-policy', 'content-security-policy', 'permissions-policy',
 ];
 
 function pickHeaders(headers) {
@@ -51,7 +52,7 @@ async function readCapped(res, maxBytes) {
  * @param {{method?: 'GET'|'HEAD', readBody?: boolean, maxBytes?: number, timeoutMs?: number, maxHops?: number}} opts
  */
 export async function fetchChain(rawUrl, opts = {}) {
-  const { method = 'GET', readBody = true, maxBytes = 3_000_000, timeoutMs = 15_000, maxHops = 10 } = opts;
+  const { method = 'GET', readBody = true, countBody = false, maxBytes = 3_000_000, timeoutMs = 15_000, maxHops = 10 } = opts;
   const started = Date.now();
   const deadline = started + timeoutMs;
   const redirects = [];
@@ -77,6 +78,8 @@ export async function fetchChain(rawUrl, opts = {}) {
           'user-agent': USER_AGENT,
           'accept': method === 'GET' ? 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' : '*/*',
           'accept-language': 'en-ZA,en;q=0.9',
+          // Ask for compression like a browser does, so compression checks reflect what visitors get.
+          'accept-encoding': 'gzip, br',
         },
       });
     } catch (e) {
@@ -109,6 +112,15 @@ export async function fetchChain(rawUrl, opts = {}) {
         let decoder;
         try { decoder = new TextDecoder(charsetOf(contentType, all)); } catch { decoder = new TextDecoder('utf-8'); }
         Object.assign(out, { body: decoder.decode(all), bytes, truncated });
+      } else if (countBody && method === 'GET' && res.body) {
+        // Download only to measure size and time; nothing is kept or returned.
+        const reader = res.body.getReader();
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          out.bytes += value.byteLength;
+          if (out.bytes > maxBytes) { out.truncated = true; await reader.cancel(); break; }
+        }
       } else {
         try { await res.body?.cancel(); } catch {}
       }
@@ -125,6 +137,15 @@ export async function fetchChain(rawUrl, opts = {}) {
 }
 
 /** Lightweight status check for links/images: HEAD, falling back to GET when HEAD isn't supported. */
+/** Downloads a page resource (script, stylesheet, image, font) to measure its real
+ *  size and download time. bytes = decoded size; headers['content-length'] is the
+ *  transfer size when the server sends it. */
+export async function measureUrl(rawUrl) {
+  const r = await fetchChain(rawUrl, { method: 'GET', readBody: false, countBody: true, maxBytes: 10_000_000, timeoutMs: 15_000, maxHops: 5 });
+  if (!r.error) r.downloadMs = Math.max(0, r.totalMs - (r.ttfbMs || 0) - (r.redirects?.reduce((n, h) => n + (h.ms || 0), 0) || 0));
+  return r;
+}
+
 export async function checkUrl(rawUrl) {
   let r = await fetchChain(rawUrl, { method: 'HEAD', readBody: false, timeoutMs: 10_000 });
   if (!r.error && [400, 403, 405, 501].includes(r.status)) {

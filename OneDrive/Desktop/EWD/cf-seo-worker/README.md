@@ -10,6 +10,8 @@ dashboard. Free Cloudflare plan is enough: each call is one small fetch.
 | `POST /fetch {url}` | Page with status, redirect chain, headers, timing, body (text only, ≤ 3 MB) |
 | `POST /check {url}` | Status-only check for links and images (HEAD, falls back to GET) |
 | `POST /ai {summary}` | Claude recommendations (needs `ANTHROPIC_API_KEY`) |
+| `POST /measure {url}` | Downloads a page resource to measure its size/time (nothing returned but numbers) |
+| `POST /public/growth/session {urls, turnstileToken}` | Starts a visitor Website Growth scan: returns a session id with a request budget |
 | `POST /public/quick {url, turnstileToken}` | Public Quick SEO Check (homepage + 4 pages, robots, sitemap, probes) — no sign-in |
 | `GET /health` | Liveness, no auth |
 
@@ -53,6 +55,33 @@ It's protected by Cloudflare Turnstile and daily limits (5 checks per visitor,
 
 Until then the endpoint answers `quick_not_configured` and the page shows a
 "being set up" message instead of the form.
+
+## Website Growth (`elevatewebdesigns/website-growth.html`)
+
+Public page with four tools (SEO Auditor, Health Dashboard, Performance
+Analyzer, Competitor Analyzer). Visitors pass Turnstile once per scan and get
+a session (`x-session` header) that `/fetch`, `/check` and `/measure` accept.
+The `Limiter` Durable Object (free plan) enforces, exactly:
+
+- a request budget per session (140 per site scanned; see `src/growth.js`)
+- page fetches only from the sites the visitor entered (sitemaps excepted)
+- 3 scan sessions per visitor IP per day, 100 per day in total
+
+Change the daily limits without code via `[vars]` in `wrangler.toml`:
+`GROWTH_IP_DAILY`, `GROWTH_GLOBAL_DAILY`. When you're signed in with the admin
+login, the same page runs full-size scans with your Firebase token instead.
+
+Scoring weights live in `elevatewebdesigns/seo/growth/scoring.js` (documented
+at the top of that file).
+
+Known limits (by design, free-first):
+- Speed figures are measured from Cloudflare's network, not a visitor's phone.
+- Lighthouse / Core Web Vitals need Google PageSpeed Insights. Add a free API
+  key (restricted to your domain) as `PAGESPEED_KEY` in `seo/growth/app.js`;
+  until then they show "Not available".
+- Pages that build their content with JavaScript are read as raw HTML.
+- Google Business Profile, Search Console and keyword rankings aren't checked
+  (they need Google account access/APIs).
 
 ## Turn on AI recommendations (optional)
 

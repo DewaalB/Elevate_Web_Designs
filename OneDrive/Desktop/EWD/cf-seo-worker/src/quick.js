@@ -16,7 +16,7 @@ export class QuickError extends Error {
   constructor(code, message, status) { super(message); this.code = code; this.status = status; }
 }
 
-async function verifyTurnstile(token, ip, env) {
+export async function verifyTurnstile(token, ip, env) {
   if (!token || typeof token !== 'string') throw new QuickError('captcha_failed', 'Please complete the "I\'m human" check.', 403);
   const form = new FormData();
   // Tolerate stray whitespace/quotes from pasting the secret into a terminal.

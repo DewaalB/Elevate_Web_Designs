@@ -19,3 +19,13 @@ id = "3f46472150234e3ab91464c40698c82e"
 
 # Turnstile secret from Cloudflare dashboard → Turnstile → your widget:
 #   npx wrangler secret put TURNSTILE_SECRET
+
+# ── Public Website Growth scans (website-growth.html) ──
+# Exact per-session request budgets and daily limits (free plan, SQLite-backed).
+[[durable_objects.bindings]]
+name = "LIMITER"
+class_name = "Limiter"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Limiter"]
