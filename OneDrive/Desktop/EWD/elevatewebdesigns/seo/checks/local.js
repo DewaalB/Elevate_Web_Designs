@@ -31,15 +31,19 @@ export const localChecks = [
     const node = localNode(pages, home);
     if (!node) return skip(def, 'No LocalBusiness markup to check.');
     const addr = addressOf(node);
-    const required = { name: !!node.name, address: !!(addr?.streetAddress || typeof node.address === 'string'), telephone: !!node.telephone };
+    // Service-area businesses (no storefront) are told by Google to hide their street
+    // address, so a town plus a declared service area counts as a complete address.
+    const serviceArea = !addr?.streetAddress && !!addr?.addressLocality && !!node.areaServed;
+    const required = { name: !!node.name, address: !!(addr?.streetAddress || typeof node.address === 'string' || serviceArea), telephone: !!node.telephone };
     const recommended = {
       openingHours: !!(node.openingHoursSpecification || node.openingHours), geo: !!node.geo, url: !!node.url,
       image: !!(node.image || node.logo), 'address.addressLocality': !!addr?.addressLocality, 'address.postalCode': !!addr?.postalCode,
     };
+    if (serviceArea) { delete recommended.geo; delete recommended['address.postalCode']; } // only meaningful for a visitable location
     const missReq = Object.keys(required).filter(k => !required[k]);
     const missRec = Object.keys(recommended).filter(k => !recommended[k]);
     if (!missReq.length && !missRec.length) return pass(def, 'Name, address, phone, hours, coordinates, url and image are all present.');
-    const score = (Object.values(required).filter(Boolean).length * 2 + Object.values(recommended).filter(Boolean).length) / (3 * 2 + 6);
+    const score = (Object.values(required).filter(Boolean).length * 2 + Object.values(recommended).filter(Boolean).length) / (3 * 2 + Object.keys(recommended).length);
     return result(def, { status: missReq.length ? 'warning' : 'info', score,
       message: [missReq.length && `Missing key details: ${missReq.join(', ')}.`, missRec.length && `Missing recommended: ${missRec.join(', ')}.`].filter(Boolean).join(' ') });
   },

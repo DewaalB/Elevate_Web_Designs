@@ -840,6 +840,7 @@ footer { background: var(--navy); border-top: 1px solid rgba(0,212,255,0.08); }
 .footer-logo { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:2px; color:var(--white); margin-bottom:0.4rem; }
 .footer-tagline { font-size:0.7rem; color:rgba(0,212,255,0.7); letter-spacing:3px; text-transform:uppercase; margin-bottom:1rem; }
 .footer-desc { font-size:0.82rem; color:var(--gray); line-height:1.7; font-weight:300; max-width:260px; }
+.footer-address { font-style:normal; color:rgba(255,255,255,0.55); font-size:0.85rem; line-height:1.6; margin-top:0.4rem; }
 .footer-col-title { font-size:0.7rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); margin-bottom:1rem; }
 .footer-links-col { display:flex; flex-direction:column; gap:0.6rem; }
 .footer-links-col a { font-size:0.85rem; color:rgba(255,255,255,0.55); text-decoration:none; transition:color 0.2s; }
