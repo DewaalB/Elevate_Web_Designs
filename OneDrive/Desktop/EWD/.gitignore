@@ -12,6 +12,8 @@ firebase-debug.*.log*
 
 # Cloudflare Workers local cache/state
 cf-worker/.wrangler/
+cf-seo-worker/.wrangler/
+.dev.vars
 
 # Firebase config
 

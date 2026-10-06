@@ -1,0 +1,12 @@
+name = "elevate-seo-audit"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+FIREBASE_PROJECT_ID = "elevatewebdesigns-1fc3d"
+ADMIN_EMAIL = "dewaalb3@gmail.com"
+ALLOWED_ORIGINS = "https://elevatewebdesign.co.za,https://www.elevatewebdesign.co.za,https://elevatewebdesigns-1fc3d.web.app,https://elevatewebdesigns-1fc3d.firebaseapp.com"
+
+# Secret (optional, enables AI recommendations — never commit it):
+#   npx wrangler secret put ANTHROPIC_API_KEY

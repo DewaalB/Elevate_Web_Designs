@@ -43,6 +43,22 @@ service cloud.firestore {
         (!('dealValue' in request.resource.data) || (request.resource.data.dealValue is number && request.resource.data.dealValue >= 0 && request.resource.data.dealValue < 1000000));
     }
 
+    // SEO audit reports (seo.html). Admin-only. The report body is one JSON
+    // string; create-only apart from attaching AI recommendations later.
+    match /seoAudits/{auditId} {
+      allow read, list, delete: if isAdmin();
+      allow create: if isAdmin() &&
+        request.resource.data.keys().hasOnly(['url', 'host', 'overall', 'scores', 'counts', 'pageCount', 'version', 'createdAt', 'report']) &&
+        request.resource.data.url is string && request.resource.data.url.size() < 2000 &&
+        request.resource.data.host is string && request.resource.data.host.size() < 300 &&
+        request.resource.data.overall is number &&
+        request.resource.data.report is string && request.resource.data.report.size() < 800000 &&
+        request.resource.data.createdAt == request.time;
+      allow update: if isAdmin() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ai']) &&
+        request.resource.data.ai is string && request.resource.data.ai.size() < 150000;
+    }
+
     // Deny everything else by default.
     match /{document=**} {
       allow read, write: if false;

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEO Audit — Elevate Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#070e1a">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,8 92,88 8,88' fill='none' stroke='%2300d4ff' stroke-width='7' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="seo.css">
+</head>
+<body>
+
+  <!-- ═══ SIGN-IN ═══ -->
+  <div id="login-view" class="auth-wrap" hidden>
+    <form id="login-form" class="auth-card">
+      <div class="logo">ELEVATE <span class="accent">SEO AUDIT</span></div>
+      <p class="muted">Sign in with your admin account.</p>
+      <label class="field"><span>Email</span><input type="email" id="login-email" autocomplete="username" required></label>
+      <label class="field"><span>Password</span><input type="password" id="login-password" autocomplete="current-password" required></label>
+      <button type="submit" class="btn primary wide" id="login-btn">Sign In</button>
+      <p class="error-text" id="login-error" role="alert"></p>
+    </form>
+  </div>
+
+  <!-- ═══ APP ═══ -->
+  <div id="app-view" hidden>
+    <header class="topbar">
+      <a class="logo" href="admin.html" title="Back to the admin dashboard">ELEVATE <span class="accent">SEO AUDIT</span></a>
+      <div class="topbar-actions">
+        <span class="dev-badge" id="dev-badge" hidden>DEV MODE · audits not saved</span>
+        <a class="btn ghost small" href="admin.html">← Leads</a>
+        <button class="btn ghost small" id="logout-btn">Log Out</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel scan-panel">
+        <form id="scan-form" class="scan-form" novalidate>
+          <label class="field url-field">
+            <span>Website URL</span>
+            <input type="text" id="url-input" placeholder="example.co.za" autocomplete="url" inputmode="url" required>
+          </label>
+          <div class="scan-options">
+            <label class="field"><span>Max pages</span>
+              <select id="opt-pages"><option>25</option><option selected>50</option><option>100</option><option>250</option></select>
+            </label>
+            <label class="field"><span>Crawl depth</span>
+              <select id="opt-depth"><option>1</option><option>2</option><option selected>3</option><option>5</option></select>
+            </label>
+            <label class="check"><input type="checkbox" id="opt-robots" checked> Respect robots.txt</label>
+            <label class="check"><input type="checkbox" id="opt-external" checked> Check external links</label>
+            <label class="check"><input type="checkbox" id="opt-psi" checked> PageSpeed (mobile)</label>
+          </div>
+          <button type="submit" class="btn primary" id="run-btn">Run SEO Audit</button>
+        </form>
+        <details class="settings">
+          <summary>Settings</summary>
+          <label class="field"><span>Google PageSpeed API key (optional — avoids the shared quota)</span>
+            <input type="password" id="psi-key" placeholder="AIza…" autocomplete="off">
+          </label>
+          <p class="muted small">Free from Google Cloud Console → APIs &amp; Services → enable "PageSpeed Insights API" → Credentials. Stored only in this browser.</p>
+        </details>
+        <p class="error-text" id="scan-error" role="alert"></p>
+      </section>
+
+      <section class="panel progress-panel" id="progress-panel" hidden aria-live="polite">
+        <div class="progress-head">
+          <strong id="progress-title">Starting…</strong>
+          <button class="btn ghost small" id="cancel-btn" type="button">Cancel</button>
+        </div>
+        <ol class="phases" id="phases"></ol>
+        <div class="bar"><div class="bar-fill" id="bar-fill"></div></div>
+        <p class="muted small mono" id="progress-detail"></p>
+        <p class="muted small">Keep this page open until the scan finishes. If your phone locks or you switch apps, it picks up where it left off when you come back.</p>
+      </section>
+
+      <section id="report" hidden></section>
+
+      <section class="panel history-panel">
+        <div class="history-head">
+          <h2>Saved audits</h2>
+          <button class="btn ghost small" id="history-refresh" type="button">⟳</button>
+        </div>
+        <div id="history-list" class="history-list"><p class="muted small">Loading…</p></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script type="module" src="seo/app.js"></script>
+</body>
+</html>

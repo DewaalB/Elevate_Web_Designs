@@ -1,0 +1,5 @@
+# Copy to .dev.vars for local `npm run dev` only. .dev.vars is never deployed.
+# Lets the dashboard at http://localhost:<port>/seo.html?dev=1 call the local
+# worker without signing in. Has no effect on the deployed worker.
+DEV_NO_AUTH=1
+# ANTHROPIC_API_KEY=sk-ant-...
