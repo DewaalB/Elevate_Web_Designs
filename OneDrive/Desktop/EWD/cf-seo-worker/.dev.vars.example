@@ -3,3 +3,5 @@
 # worker without signing in. Has no effect on the deployed worker.
 DEV_NO_AUTH=1
 # ANTHROPIC_API_KEY=sk-ant-...
+# Cloudflare's always-pass Turnstile test secret, for local testing of the public check
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA

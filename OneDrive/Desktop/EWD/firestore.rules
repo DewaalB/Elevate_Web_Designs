@@ -23,7 +23,7 @@ service cloud.firestore {
         request.resource.data.message.size() > 0 && request.resource.data.message.size() < 5000 &&
         request.resource.data.phone is string && request.resource.data.phone.size() < 50 &&
         request.resource.data.package is string && request.resource.data.package.size() < 100 &&
-        request.resource.data.source in ['website_contact_form', 'website_estimator'] &&
+        request.resource.data.source in ['website_contact_form', 'website_estimator', 'website_seo_check'] &&
         request.resource.data.createdAt == request.time &&
         // UTM campaign-attribution tags: optional, small, bounded strings.
         (!('utm_source' in request.resource.data)   || (request.resource.data.utm_source   is string && request.resource.data.utm_source.size()   < 100)) &&

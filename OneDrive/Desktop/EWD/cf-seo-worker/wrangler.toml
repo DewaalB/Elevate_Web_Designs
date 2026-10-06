@@ -10,3 +10,13 @@ ALLOWED_ORIGINS = "https://elevatewebdesign.co.za,https://www.elevatewebdesign.c
 
 # Secret (optional, enables AI recommendations — never commit it):
 #   npx wrangler secret put ANTHROPIC_API_KEY
+
+# ── Public Quick SEO Check (free-seo-check.html) ──
+# Daily-limit counters. Create once, then paste the id below and uncomment:
+#   npx wrangler kv namespace create QUICK_LIMITS
+# [[kv_namespaces]]
+# binding = "QUICK_LIMITS"
+# id = "PASTE_ID_HERE"
+#
+# Turnstile secret from Cloudflare dashboard → Turnstile → your widget:
+#   npx wrangler secret put TURNSTILE_SECRET

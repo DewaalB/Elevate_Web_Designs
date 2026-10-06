@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free SEO Check for Your Website | Elevate Web Design</title>
+  <meta name="description" content="Free instant SEO check for South African business websites. See your SEO score and the top issues stopping you from ranking on Google — in about 20 seconds.">
+  <link rel="canonical" href="https://elevatewebdesign.co.za/free-seo-check.html">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#070e1a">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://elevatewebdesign.co.za/free-seo-check.html">
+  <meta property="og:title" content="Free SEO Check — How does your website score?">
+  <meta property="og:description" content="Get your SEO score and top fixes in about 20 seconds. Free, no sign-up.">
+  <meta property="og:image" content="https://elevatewebdesign.co.za/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,8 92,88 8,88' fill='none' stroke='%2300d4ff' stroke-width='7' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="seo.css">
+  <link rel="stylesheet" href="free-seo-check.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Free SEO Check",
+    "url": "https://elevatewebdesign.co.za/free-seo-check.html",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "ZAR" },
+    "provider": { "@type": "ProfessionalService", "name": "Elevate Web Design", "url": "https://elevatewebdesign.co.za/" }
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="/">ELEVATE <span class="accent">WEB DESIGN</span></a>
+    <a class="btn ghost small" href="/#contact">Get a Quote</a>
+  </header>
+
+  <main class="qc">
+    <section class="qc-hero">
+      <span class="eyebrow">Free · No sign-up · About 20 seconds</span>
+      <h1>HOW DOES YOUR WEBSITE<br><span class="accent">SCORE ON GOOGLE?</span></h1>
+      <p class="qc-lead">Enter your website and get an instant SEO score, plus the top issues that could be keeping customers from finding you.</p>
+
+      <form id="qc-form" class="panel qc-form" novalidate>
+        <label class="field">
+          <span>Your website address</span>
+          <input type="text" id="qc-url" placeholder="yourbusiness.co.za" autocomplete="url" inputmode="url" required>
+        </label>
+        <div id="qc-turnstile" class="qc-turnstile"></div>
+        <button type="submit" class="btn primary" id="qc-btn">Check my website</button>
+        <p class="error-text" id="qc-error" role="alert"></p>
+        <p class="muted small" id="qc-unavailable" hidden>The free checker is being set up. Want a free audit now? <a href="/#contact">Ask us directly</a>.</p>
+      </form>
+    </section>
+
+    <section class="panel qc-progress" id="qc-progress" hidden aria-live="polite">
+      <span class="spinner"></span>
+      <div><strong id="qc-status">Scanning your website…</strong>
+      <p class="muted small">This usually takes 10–20 seconds. Keep this page open.</p></div>
+    </section>
+
+    <section id="qc-result" hidden></section>
+
+    <section class="qc-explain">
+      <h2>What the free check looks at</h2>
+      <div class="qc-grid">
+        <div><strong>Technical basics</strong><p>HTTPS, redirects, robots.txt, sitemap, mobile viewport, canonical tags and missing-page handling.</p></div>
+        <div><strong>On-page SEO</strong><p>Titles, meta descriptions, headings and how your pages link together.</p></div>
+        <div><strong>Content</strong><p>Thin pages, duplicate content, readability and keyword stuffing.</p></div>
+        <div><strong>Local SEO</strong><p>Business markup, phone number, address, contact details and maps — key for local searches.</p></div>
+      </div>
+      <p class="muted small">The quick check reads your homepage and up to 4 linked pages. Our full audit crawls up to 250 pages, checks every link and image, measures real-world speed and gives you a step-by-step fix plan.</p>
+    </section>
+  </main>
+
+  <footer class="qc-footer muted small">
+    © Elevate Web Design · <a href="/">Home</a> · <a href="/#pricing">Pricing</a> · <a href="/#contact">Contact</a>
+  </footer>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+  <script type="module" src="seo/public.js"></script>
+</body>
+</html>

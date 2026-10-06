@@ -140,9 +140,22 @@ function siteSummary(site) {
   };
 }
 
+/** Checks that need a full crawl or link/image status checks. The public quick
+ *  check doesn't do those, so it reports them as not checked instead of passing. */
+const FULL_AUDIT_ONLY = new Set([
+  'tech.broken-internal-links', 'tech.broken-external-links', 'tech.sitemap-quality',
+  'onpage.orphans', 'onpage.few-inbound', 'onpage.important-unlinked',
+  'images.broken', 'images.large', 'images.format', 'perf.image-caching',
+]);
+
 export function analyze(crawl) {
   const ctx = buildContext(crawl);
-  const results = runChecks(ctx).sort((a, b) => SEVERITY_ORDER[a.status] - SEVERITY_ORDER[b.status] || b.weight - a.weight);
+  let raw = runChecks(ctx);
+  if (crawl.site.quick) {
+    raw = raw.map(r => (FULL_AUDIT_ONLY.has(r.id)
+      ? { ...r, status: 'skipped', score: 0, message: 'Included in the full audit.', affected: [], affectedTotal: 0 } : r));
+  }
+  const results = raw.sort((a, b) => SEVERITY_ORDER[a.status] - SEVERITY_ORDER[b.status] || b.weight - a.weight);
   const categories = scoreCategories(results);
   const scored = categories.filter(c => c.score != null);
   const wSum = scored.reduce((n, c) => n + c.weight, 0);

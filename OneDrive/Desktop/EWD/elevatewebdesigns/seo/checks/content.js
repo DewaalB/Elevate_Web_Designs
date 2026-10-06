@@ -20,14 +20,14 @@ export const contentChecks = [
     const def = { id: 'content.thin', category: C, title: 'No extremely thin pages', weight: 8,
       fix: 'Expand these pages with genuinely useful content (what you offer, who it\'s for, prices, FAQs, examples) — or merge them into a related page.' };
     return pageCheck(def, indexable.filter(p => !UTILITY_PAGE.test(new URL(p.finalUrl).pathname)), p => p.wordCount < 100 && `${p.wordCount} words on the whole page`,
-      { severity: 'critical', passMessage: 'No page has under 100 words.', failMessage: n => `${plural(n, 'page')} have under 100 words — Google rarely ranks pages this thin.` });
+      { severity: 'critical', passMessage: 'No page has under 100 words.', failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'has' : 'have'} under 100 words — Google rarely ranks pages this thin.` });
   },
 
   function lowWordCount({ indexable }) {
     const def = { id: 'content.low-word-count', category: C, title: 'Pages have substantial content', weight: 4,
       fix: 'Aim for at least ~300 words of unique main content on pages you want to rank, written for your customers\' questions.' };
     return pageCheck(def, indexable.filter(p => !UTILITY_PAGE.test(new URL(p.finalUrl).pathname) && p.wordCount >= 100), p => p.contentWordCount < 300 && `${p.contentWordCount} words of main content`,
-      { passMessage: 'Every page has 300+ words of main content.', failMessage: n => `${plural(n, 'page')} have less than 300 words of main content.` });
+      { passMessage: 'Every page has 300+ words of main content.', failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'has' : 'have'} less than 300 words of main content.` });
   },
 
   function exactDuplicates({ indexable, site }) {

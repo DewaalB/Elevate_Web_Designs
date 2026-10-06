@@ -19,7 +19,7 @@ export const onpageChecks = [
     const def = { id: 'onpage.title-missing', category: C, title: 'Every page has a title', weight: 10,
       fix: 'Add a unique <title> to each page: main keyword first, then your brand, e.g. "Web Design Cape Town | Elevate".' };
     return pageCheck(def, indexable, p => (p.title === null ? 'No <title> tag' : !p.title ? 'Empty <title>' : p.titleCount > 1 && `${p.titleCount} <title> tags`),
-      { severity: 'critical', passMessage: 'Every page has exactly one title.', failMessage: n => `${plural(n, 'page')} have a missing, empty or repeated <title>.` });
+      { severity: 'critical', passMessage: 'Every page has exactly one title.', failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'has' : 'have'} a missing, empty or repeated <title>.` });
   },
 
   function titleLength({ indexable }) {
@@ -56,7 +56,7 @@ export const onpageChecks = [
     const def = { id: 'onpage.meta-missing', category: C, title: 'Every page has a meta description', weight: 6,
       fix: 'Write a 120–160 character <meta name="description"> for each page summarising it and inviting the click. Google often shows it under your title.' };
     return pageCheck(def, indexable, p => (p.metaDescription === null ? 'No meta description' : !p.metaDescription ? 'Empty meta description' : p.metaDescriptionCount > 1 && `${p.metaDescriptionCount} meta descriptions`),
-      { passMessage: 'Every page has a meta description.', failMessage: n => `${plural(n, 'page')} have no usable meta description.` });
+      { passMessage: 'Every page has a meta description.', failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'has' : 'have'} no usable meta description.` });
   },
 
   function metaLength({ indexable }) {
@@ -90,7 +90,7 @@ export const onpageChecks = [
     const def = { id: 'onpage.h1-missing', category: C, title: 'Every page has an H1 heading', weight: 6,
       fix: 'Give each page one <h1> that states its main topic — usually close to the page title.' };
     return pageCheck(def, indexable, p => !p.headings.some(h => h.level === 1) && 'No <h1>',
-      { passMessage: 'Every page has an H1.', failMessage: n => `${plural(n, 'page')} have no H1 heading.` });
+      { passMessage: 'Every page has an H1.', failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'has' : 'have'} no H1 heading.` });
   },
 
   function h1Multiple({ indexable }) {
@@ -149,7 +149,7 @@ export const onpageChecks = [
       fix: 'Add contextual links to these pages from related content. Internal links pass authority and tell Google which pages matter.' };
     if (site.crawl.limitHit) return skip(def, 'The crawl hit its page limit, so link counts would be incomplete. Re-run with a higher page limit.');
     return pageCheck(def, indexable.filter(p => p !== home && p.via !== 'sitemap'), p => (inbound.get(p.finalUrl) || 0) <= 1 && `${plural(inbound.get(p.finalUrl) || 0, 'page')} link here`,
-      { passMessage: 'Every page is linked from at least two others.', failMessage: n => `${plural(n, 'page')} are linked from only one page.` });
+      { passMessage: 'Every page is linked from at least two others.', failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'is' : 'are'} linked from only one page.` });
   },
 
   function importantUnlinked({ site, inbound, home }) {
@@ -160,7 +160,7 @@ export const onpageChecks = [
     const missing = important.filter(s => !(inbound.get(s.url) > 0));
     if (!missing.length) return pass(def, `All ${important.length} high-priority sitemap pages receive internal links.`);
     return result(def, { status: 'critical', score: 1 - missing.length / important.length,
-      message: `${plural(missing.length, 'high-priority page')} receive no internal links.`,
+      message: `${plural(missing.length, 'high-priority page')} ${missing.length === 1 ? 'receives' : 'receive'} no internal links.`,
       affected: missing.map(s => ({ url: s.url, detail: `Sitemap priority ${s.priority}` })) });
   },
 
@@ -170,7 +170,7 @@ export const onpageChecks = [
     return pageCheck(def, pages, p => {
       const bad = p.links.filter(l => l.internal && (l.generic || l.empty));
       return bad.length && bad.slice(0, 3).map(l => (l.empty ? `empty link → ${shortUrl(l.url, site.rootHost)}` : `"${l.text}" → ${shortUrl(l.url, site.rootHost)}`)).join(', ') + (bad.length > 3 ? ` +${bad.length - 3} more` : '');
-    }, { passMessage: 'Internal links use descriptive text.', failMessage: n => `${plural(n, 'page')} have vague or empty link text.` });
+    }, { passMessage: 'Internal links use descriptive text.', failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'has' : 'have'} vague or empty link text.` });
   },
 
   function deadEnds({ indexable, pages }) {

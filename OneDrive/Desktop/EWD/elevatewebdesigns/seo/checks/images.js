@@ -18,7 +18,7 @@ export const imageChecks = [
     const r = pageCheck(def, withImgs, p => {
       const miss = p.images.filter(i => i.alt === null && !i.decorative);
       return miss.length && `${plural(miss.length, 'image')}: ${miss.slice(0, 3).map(i => (i.src ? fileName(i.src) : 'inline image')).join(', ')}`;
-    }, { passMessage: `All ${total} images have an alt attribute.`, failMessage: n => `${plural(n, 'page')} have images with no alt attribute.` });
+    }, { passMessage: `All ${total} images have an alt attribute.`, failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'has' : 'have'} images with no alt attribute.` });
     const missingCount = withImgs.reduce((n, p) => n + p.images.filter(i => i.alt === null && !i.decorative).length, 0);
     if (missingCount) r.score = 1 - missingCount / total;
     return r;
@@ -53,7 +53,7 @@ export const imageChecks = [
     const r = pageCheck(def, pages.filter(p => p.images.length), p => {
       const broken = [...new Set(p.images.filter(i => i.src && isBroken(checks.images.get(i.src))).map(i => i.src))];
       return broken.length && broken.slice(0, 3).map(u => `${fileName(u)} (${checks.images.get(u).error || checks.images.get(u).status})`).join(', ');
-    }, { severity: 'critical', passMessage: `Checked ${site.checkLimits.images.checked} images — none broken.`, failMessage: n => `${plural(n, 'page')} show broken images.` });
+    }, { severity: 'critical', passMessage: `Checked ${site.checkLimits.images.checked} images — none broken.`, failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'shows' : 'show'} broken images.` });
     const lim = site.checkLimits.images;
     if (lim.total > lim.checked) r.message += ` (${lim.total - lim.checked} images not checked — limit ${lim.checked}.)`;
     return r;

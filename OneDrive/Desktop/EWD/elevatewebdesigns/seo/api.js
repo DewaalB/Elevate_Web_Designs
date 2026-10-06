@@ -13,8 +13,10 @@ export class ApiError extends Error {
   constructor(code, message, status) { super(message); this.code = code; this.status = status; }
 }
 
+export const WORKER_URL = DEV_MODE ? DEV_WORKER_URL : PROD_WORKER_URL;
+
 export function createApi(getToken) {
-  const base = DEV_MODE ? DEV_WORKER_URL : PROD_WORKER_URL;
+  const base = WORKER_URL;
 
   async function postOnce(path, body, signal) {
     const headers = { 'content-type': 'application/json' };

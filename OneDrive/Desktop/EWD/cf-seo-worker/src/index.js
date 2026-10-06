@@ -13,11 +13,15 @@
      /check  {url}       status-only check for links and images
      /ai     {summary}   Claude recommendations (needs the
                          ANTHROPIC_API_KEY secret)
+   POST /public/quick {url, turnstileToken}
+                         public Quick SEO Check — no sign-in, but
+                         Turnstile + per-IP/global daily limits
    GET /health           liveness, no auth
    ========================================================= */
 import { verifyAdmin, AuthError } from './auth.js';
 import { fetchChain, checkUrl } from './fetcher.js';
 import { aiRecommendations, Anthropic } from './ai.js';
+import { quickCheck, QuickError } from './quick.js';
 
 const MAX_BODY = 300_000;
 
@@ -54,6 +58,17 @@ export default {
       return json({ ok: true, ai: Boolean(env.ANTHROPIC_API_KEY) }, 200, ch);
     }
     if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405, ch);
+
+    // Public visitor endpoint: its own protection (Turnstile + limits), no admin token.
+    if (url.pathname === '/public/quick') {
+      if (!ch['access-control-allow-origin']) return json({ error: 'forbidden' }, 403, ch);
+      try {
+        return json(await quickCheck(await readJson(request), request, env), 200, ch);
+      } catch (e) {
+        if (e instanceof QuickError) return json({ error: e.code, message: e.message }, e.status, ch);
+        return json({ error: 'quick_failed', message: 'Something went wrong running the check. Please try again.' }, 500, ch);
+      }
+    }
 
     // Local `wrangler dev` only: .dev.vars can switch auth off for requests to localhost.
     const devBypass = env.DEV_NO_AUTH === '1' && ['localhost', '127.0.0.1'].includes(url.hostname);

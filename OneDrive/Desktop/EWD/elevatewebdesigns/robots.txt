@@ -2,6 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 Disallow: /seo.html
-Disallow: /seo/
 
 Sitemap: https://elevatewebdesign.co.za/sitemap.xml

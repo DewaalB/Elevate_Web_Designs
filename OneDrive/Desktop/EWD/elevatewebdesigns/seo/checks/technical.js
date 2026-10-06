@@ -140,7 +140,7 @@ export const technicalChecks = [
     const r = pageCheck(def, pages, p => {
       const broken = [...new Set(p.links.filter(l => l.internal && isBroken(statusOf(l.url))).map(l => l.url))];
       return broken.length && broken.slice(0, 5).map(u => `${shortUrl(u, site.rootHost)} (${statusText(statusOf(u))})`).join(', ') + (broken.length > 5 ? ` +${broken.length - 5} more` : '');
-    }, { severity: 'critical', passMessage: 'No broken internal links found.', failMessage: n => `${plural(n, 'page')} link to broken internal URLs.` });
+    }, { severity: 'critical', passMessage: 'No broken internal links found.', failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'links' : 'link'} to broken internal URLs.` });
     if (lim.total > lim.checked) r.message += ` (${lim.total - lim.checked} uncrawled internal links not checked — limit reached.)`;
     return r;
   },
@@ -155,7 +155,7 @@ export const technicalChecks = [
     const r = pageCheck(def, pages, p => {
       const broken = [...new Set(p.links.filter(l => !l.internal && isBroken(checks.external.get(l.url))).map(l => l.url))];
       return broken.length && broken.slice(0, 4).map(u => `${trunc(u, 70)} (${statusText(checks.external.get(u))})`).join(', ') + (broken.length > 4 ? ` +${broken.length - 4} more` : '');
-    }, { passMessage: `Checked ${lim.checked} external links — none broken.`, failMessage: n => `${plural(n, 'page')} link to broken external pages.` });
+    }, { passMessage: `Checked ${lim.checked} external links — none broken.`, failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'links' : 'link'} to broken external pages.` });
     const notes = [];
     if (unverifiable) notes.push(`${unverifiable} could not be verified (sites like social networks block automated checks)`);
     if (lim.total > lim.checked) notes.push(`${lim.total - lim.checked} not checked (limit ${lim.checked})`);
@@ -169,7 +169,7 @@ export const technicalChecks = [
     const chains = records.filter(r => (r.redirects?.length || 0) >= 2);
     if (!chains.length) return pass(def, 'No URL needed more than one redirect.');
     return result(def, { status: 'warning', score: 1 - chains.length / records.length,
-      message: `${plural(chains.length, 'URL')} pass through 2+ redirects before loading.`,
+      message: `${plural(chains.length, 'URL')} ${chains.length === 1 ? 'passes' : 'pass'} through 2+ redirects before loading.`,
       affected: chains.map(r => ({ url: r.url, detail: [...r.redirects.map(h => `${h.status}`), r.status].join(' → ') + ` → ${r.finalUrl}` })) });
   },
 
@@ -185,14 +185,14 @@ export const technicalChecks = [
     return pageCheck(def, pages, p => {
       const hits = [...new Set(p.links.filter(l => l.internal && target.has(l.url)).map(l => l.url))];
       return hits.length && hits.slice(0, 4).map(u => `${shortUrl(u, site.rootHost)} → ${shortUrl(target.get(u), site.rootHost)}`).join(', ');
-    }, { severity: 'warning', passMessage: 'Internal links point straight at final, canonical URLs.', failMessage: n => `${plural(n, 'page')} link to URLs that redirect or aren't the canonical version.` });
+    }, { severity: 'warning', passMessage: 'Internal links point straight at final, canonical URLs.', failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'links' : 'link'} to URLs that redirect or aren't the canonical version.` });
   },
 
   function canonicalMissing({ pages, isNoindex }) {
     const def = { id: 'tech.canonical-missing', category: C, title: 'Pages declare a canonical URL', weight: 4,
       fix: 'Add <link rel="canonical" href="https://yourdomain/page-url"> to each page\'s <head>, pointing at the page\'s own preferred URL.' };
     return pageCheck(def, pages.filter(p => !isNoindex(p)), p => !p.canonicals.length && 'No canonical tag',
-      { passMessage: 'Every indexable page declares a canonical URL.', failMessage: (n, t) => `${n} of ${t} pages have no canonical tag.` });
+      { passMessage: 'Every indexable page declares a canonical URL.', failMessage: (n, t) => `${n} of ${t} pages ${n === 1 ? 'has' : 'have'} no canonical tag.` });
   },
 
   function canonicalProblems({ pages, statusOf, site }) {
@@ -210,7 +210,7 @@ export const technicalChecks = [
       if (s && (s.error || s.status >= 400)) return `Points to a broken URL (${statusText(s)})`;
       if (s && s.redirects?.length) return `Points to a URL that redirects (${c.url} → ${s.finalUrl})`;
       return false;
-    }, { severity: 'critical', passMessage: `All ${withCanon.length} canonical tags are valid.`, failMessage: n => `${plural(n, 'page')} have a canonical tag Google will ignore or misread.` });
+    }, { severity: 'critical', passMessage: `All ${withCanon.length} canonical tags are valid.`, failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'has' : 'have'} a canonical tag Google will ignore or misread.` });
   },
 
   function noindexHome({ home, isNoindex }) {
@@ -225,7 +225,7 @@ export const technicalChecks = [
       fix: 'Confirm each of these should be hidden from Google. If not, remove "noindex" from the robots meta tag or X-Robots-Tag header.' };
     const rest = pages.filter(p => p !== home);
     const r = pageCheck(def, rest, p => isNoindex(p) && `noindex via ${p.metaRobots?.includes('noindex') ? 'meta robots' : 'X-Robots-Tag header'}`,
-      { passMessage: 'No other pages are noindexed.', failMessage: n => `${plural(n, 'page')} are hidden from Google with noindex — check this is intentional.` });
+      { passMessage: 'No other pages are noindexed.', failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'is' : 'are'} hidden from Google with noindex — check this is intentional.` });
     if (r.status === 'warning' || r.status === 'critical') { r.status = 'info'; r.weight = 0; }
     return r;
   },
@@ -327,14 +327,14 @@ export const technicalChecks = [
     const def = { id: 'tech.mixed-content', category: C, title: 'No insecure (http) resources on HTTPS pages', weight: 3,
       fix: 'Change these resource URLs to https://. Browsers block or warn about insecure content on secure pages.' };
     return pageCheck(def, pages.filter(p => p.finalUrl.startsWith('https:')), p => p.mixedContent.length && p.mixedContent.slice(0, 3).join(', '),
-      { passMessage: 'No insecure resources found.', failMessage: n => `${plural(n, 'page')} load http:// resources.` });
+      { passMessage: 'No insecure resources found.', failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'loads' : 'load'} http:// resources.` });
   },
 
   function jsRendering({ pages }) {
     const def = { id: 'tech.js-content', category: C, title: 'Content is in the HTML (not only JavaScript)', weight: 0,
       fix: 'Render important text in the HTML (server-side rendering or pre-rendering) so every crawler and social preview can read it.' };
     const r = pageCheck(def, pages, p => (p.appShell || (p.wordCount < 50 && p.scriptCount >= 5)) && `Only ${p.wordCount} words in the raw HTML, ${p.scriptCount} scripts`,
-      { passMessage: 'Page content is present in the HTML.', failMessage: n => `${plural(n, 'page')} appear to build their content with JavaScript. This audit (like many crawlers) reads raw HTML, so content results for these pages may be incomplete.` });
+      { passMessage: 'Page content is present in the HTML.', failMessage: n => `${plural(n, 'page')} ${n === 1 ? 'appears' : 'appear'} to build their content with JavaScript. This audit (like many crawlers) reads raw HTML, so content results for these pages may be incomplete.` });
     if (r.status === 'warning' || r.status === 'critical') r.status = 'info';
     return r;
   },

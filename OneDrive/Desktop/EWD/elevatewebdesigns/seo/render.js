@@ -6,11 +6,11 @@ import { shortUrl } from './url.js';
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const CAT_NAME = Object.fromEntries(CATEGORIES.map(c => [c.id, c.name]));
 const SEV_LABEL = { critical: 'Critical', warning: 'Warning', info: 'Info', pass: 'Pass', skipped: 'Not checked' };
-const tone = s => (s == null ? 'none' : s >= 90 ? 'good' : s >= 50 ? 'ok' : 'bad');
+export const tone = s => (s == null ? 'none' : s >= 90 ? 'good' : s >= 50 ? 'ok' : 'bad');
 const link = (url, label = url) => (/^https?:\/\//i.test(url)
   ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer nofollow">${esc(label)}</a>` : esc(label));
 
-function ring(score, size = 132) {
+export function ring(score, size = 132) {
   const r = 52, c = 2 * Math.PI * r, pct = score == null ? 0 : score / 100;
   return `<svg class="ring tone-${tone(score)}" viewBox="0 0 120 120" width="${size}" height="${size}" role="img" aria-label="SEO score ${score ?? 'not available'} out of 100">
     <circle cx="60" cy="60" r="${r}" class="ring-track"/>
